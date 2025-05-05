@@ -56,11 +56,28 @@
     </div>
   </div>
 
+  <div class="section">
+    <h2>Avanzo</h2>
+    <div class="grafici-container">
+      <div class="item">
+        <% 
+          const sommaFondi = data.fondi.reduce((sum, f) => sum + f.attuale, 0);
+          const sommaBuste = data.buste.reduce((sum, b) => sum + b.attuale, 0);
+          const avanzo = data.saldo - sommaFondi - sommaBuste;
+        %>
+        <h3>Avanzo – <%= avanzo %>€</h3>
+        <canvas id="avanzoChart"></canvas>
+      </div>
+    </div>
+  </div>
+
   <script>
     const saldo = <%= data.saldo %>;
-
     const fondi = <%- JSON.stringify(data.fondi) %>;
     const buste = <%- JSON.stringify(data.buste) %>;
+    const avanzo = saldo 
+      - fondi.reduce((sum, f) => sum + f.attuale, 0)
+      - buste.reduce((sum, b) => sum + b.attuale, 0);
 
     fondi.forEach((f, i) => {
       new Chart(document.getElementById('fondoChart' + i), {
@@ -88,6 +105,18 @@
         },
         options: { plugins: { legend: { position: 'bottom' } } }
       });
+    });
+
+    new Chart(document.getElementById('avanzoChart'), {
+      type: 'pie',
+      data: {
+        labels: ['Avanzo', 'Somma Fondi + Buste'],
+        datasets: [{
+          data: [avanzo, saldo - avanzo],
+          backgroundColor: ['#FF9800', '#ddd']
+        }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
     });
   </script>
 </body>
