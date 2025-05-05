@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Situazione Finanziaria</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    .section { margin-bottom: 3rem; }
+    .item { margin-bottom: 2rem; }
+    canvas { max-width: 300px; }
+  </style>
+</head>
+<body>
+  <h1>Saldo Totale: <%= data.saldo %>€</h1>
+
+  <div class="section">
+    <h2>Fondi</h2>
+    <% data.fondi.forEach((fondo, index) => { %>
+      <div class="item">
+        <h3><%= fondo.nome %></h3>
+        <canvas id="fondoChart<%= index %>"></canvas>
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="section">
+    <h2>Buste</h2>
+    <% data.buste.forEach((busta, index) => { %>
+      <div class="item">
+        <h3><%= busta.nome %></h3>
+        <canvas id="bustaChart<%= index %>"></canvas>
+      </div>
+    <% }) %>
+  </div>
+
+  <script>
+    const saldo = <%= data.saldo %>;
+
+    const fondi = <%- JSON.stringify(data.fondi) %>;
+    const buste = <%- JSON.stringify(data.buste) %>;
+
+    fondi.forEach((f, i) => {
+      new Chart(document.getElementById('fondoChart' + i), {
+        type: 'pie',
+        data: {
+          labels: ['Accantonato', 'Resto del saldo'],
+          datasets: [{
+            data: [f.attuale, saldo - f.attuale],
+            backgroundColor: ['#4CAF50', '#ddd']
+          }]
+        },
+        options: { plugins: { legend: { position: 'bottom' } } }
+      });
+    });
+
+    buste.forEach((b, i) => {
+      new Chart(document.getElementById('bustaChart' + i), {
+        type: 'pie',
+        data: {
+          labels: ['Accantonato', 'Resto del saldo'],
+          datasets: [{
+            data: [b.attuale, saldo - b.attuale],
+            backgroundColor: ['#2196F3', '#ddd']
+          }]
+        },
+        options: { plugins: { legend: { position: 'bottom' } } }
+      });
+    });
+  </script>
+</body>
+</html>
