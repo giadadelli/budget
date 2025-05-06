@@ -1,4 +1,3 @@
-// Tutti gli import vanno all'inizio
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
