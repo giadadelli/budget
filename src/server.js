@@ -45,14 +45,40 @@ function leggiMovimenti() {
   });
 }
 
+function leggiSaldo() {
+  return new Promise((resolve, reject) => {
+    const records = [];
+    fs.createReadStream(path.resolve(__dirname, '..', process.env.SALDO_PATH))
+      .pipe(csv())
+      .on('data', (row) => {
+        const data = row.data?.trim();
+        const importo = parseFloat(row.importo);
+        if (data && !isNaN(importo)) {
+          records.push({ data, importo });
+        }
+      })
+      .on('end', () => {
+        if (records.length === 0) return resolve(0);
+        // ordina per data decrescente
+        records.sort((a, b) => new Date(b.data) - new Date(a.data));
+        resolve(records[0].importo); // saldo più recente
+      })
+      .on('error', reject);
+  });
+}
+
+
 app.get('/', async (req, res) => {
   try {
     const accantonamenti = leggiAccantonamenti();
-    const movimenti = await leggiMovimenti();
+    const [movimenti, saldoLetto] = await Promise.all([
+      leggiMovimenti(),
+      leggiSaldo()
+    ]);
+    console.log(`⚠️ Saldo letto: ${saldoLetto}`);
 
     const fondi = [];
     const buste = [];
-    let saldo = 0;
 
     const sommePerCategoria = {};
 
@@ -71,7 +97,6 @@ app.get('/', async (req, res) => {
         return;
       }
     
-      saldo += mov.importo;
       sommePerCategoria[categoria] = (sommePerCategoria[categoria] || 0) + mov.importo;
     });
     
@@ -89,11 +114,11 @@ app.get('/', async (req, res) => {
 
     const totaleFondi = fondi.reduce((sum, f) => sum + f.attuale, 0);
     const totaleBuste = buste.reduce((sum, b) => sum + b.attuale, 0);
-    const avanzo = saldo - totaleFondi - totaleBuste;
+    const avanzo = saldoLetto - totaleFondi - totaleBuste;
 
     res.render('index', {
       data: {
-        saldo,
+        saldo: saldoLetto,
         fondi,
         buste,
         avanzo
