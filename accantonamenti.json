@@ -1,0 +1,53 @@
+{
+    "emergenza": {
+        "tipo": "fondo",
+        "obiettivo": 10000,
+        "frequenza": "mensile",
+        "importo": 300
+    },
+    "salute": {
+        "tipo": "fondo",
+        "obiettivo": 500,
+        "frequenza": "mensile",
+        "importo": 100
+    },
+    "casa": {
+        "tipo": "fondo",
+        "obiettivo": 500,
+        "frequenza": "mensile",
+        "importo": 100
+    },
+    "vacanze": {
+        "tipo": "fondo",
+        "obiettivo": 2400,
+        "frequenza": "mensile",
+        "importo": 300
+    },
+    "yoga": {
+        "tipo": "fondo",
+        "obiettivo": 300,
+        "frequenza": "mensile",
+        "importo": 25
+    },
+    "sito": {
+        "tipo": "fondo",
+        "obiettivo": 300,
+        "frequenza": "mensile",
+        "importo": 25
+    },
+    "regali": {
+        "tipo": "busta",
+        "frequenza": "annuale",
+        "importo": 1500
+    },
+    "tasse": {
+        "tipo": "busta",
+        "frequenza": "mensile",
+        "importo": 50
+    },
+    "spese-comuni": {
+        "tipo": "busta",
+        "frequenza": "mensile",
+        "importo": 1300
+    }
+}

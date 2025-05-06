@@ -3,38 +3,105 @@ import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
+import csv from 'csv-parser';
 
 dotenv.config();
 
-// Percorsi assoluti gestiti correttamente anche da dentro /src
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Calcolo il path assoluto del file JSON usando quello relativo da .env
-const jsonPath = path.resolve(__dirname, '..', process.env.JSON_PATH);
+const movimentiPath = path.resolve(__dirname, '..', process.env.MOVIMENTI_PATH);
+const accantonamentiPath = path.resolve(__dirname, '..', process.env.ACCANTONAMENTI_PATH);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Static files e view engine
 app.use(express.static(path.resolve(__dirname, '..', 'public')));
 app.set('view engine', 'ejs');
 app.set('views', path.resolve(__dirname, '..', 'views'));
 
-// Funzione per leggere il file JSON ogni volta che si accede alla root
-const readJson = () => {
-  const raw = fs.readFileSync(jsonPath);
+function leggiAccantonamenti() {
+  const raw = fs.readFileSync(accantonamentiPath);
   return JSON.parse(raw);
-};
+}
 
-// Rotta principale
-app.get('/', (req, res) => {
+function leggiMovimenti() {
+  return new Promise((resolve, reject) => {
+    const results = [];
+    fs.createReadStream(movimentiPath)
+      .pipe(csv())
+      .on('data', (data) => {
+        // conversione robusta
+        const importo = parseFloat(data.importo);
+        if (!isNaN(importo)) {
+          results.push({
+            ...data,
+            importo
+          });
+        }
+      })
+      .on('end', () => resolve(results))
+      .on('error', reject);
+  });
+}
+
+app.get('/', async (req, res) => {
   try {
-    const data = readJson();
-    res.render('index', { data });
+    const accantonamenti = leggiAccantonamenti();
+    const movimenti = await leggiMovimenti();
+
+    const fondi = [];
+    const buste = [];
+    let saldo = 0;
+
+    const sommePerCategoria = {};
+
+    let valoreAvanzoEsplicito = 0;
+
+    movimenti.forEach(mov => {
+      const categoria = mov.categoria;
+      if (categoria == 'avanzo') {
+        valoreAvanzoEsplicito += mov.importo;
+        saldo += mov.importo;
+        return;
+      }
+    
+      if (!accantonamenti[categoria]) {
+        console.log(`⚠️ Categoria sconosciuta nel movimento: ${categoria}`);
+        return;
+      }
+    
+      saldo += mov.importo;
+      sommePerCategoria[categoria] = (sommePerCategoria[categoria] || 0) + mov.importo;
+    });
+    
+
+    for (const [categoria, valore] of Object.entries(sommePerCategoria)) {
+      const info = accantonamenti[categoria];
+      const voce = {
+        nome: categoria,
+        attuale: valore,
+        ...info
+      };
+      if (info.tipo === 'fondo') fondi.push(voce);
+      if (info.tipo === 'busta') buste.push(voce);
+    }
+
+    const totaleFondi = fondi.reduce((sum, f) => sum + f.attuale, 0);
+    const totaleBuste = buste.reduce((sum, b) => sum + b.attuale, 0);
+    const avanzo = saldo - totaleFondi - totaleBuste;
+
+    res.render('index', {
+      data: {
+        saldo,
+        fondi,
+        buste,
+        avanzo
+      }
+    });
   } catch (error) {
-    console.error('Errore lettura JSON:', error);
-    res.status(500).send('Errore nella lettura del file JSON.');
+    console.error('❌ Errore:', error);
+    res.status(500).send('Errore nel calcolo dei dati.');
   }
 });
 
