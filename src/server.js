@@ -3,11 +3,10 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-import fs from 'fs';
 import bodyParser from 'body-parser';
 import { utility } from './utility.js';
-import csv from 'csv-parser';
 import { salvaAccantonamenti } from './services/accantonamentoService.js';
+import { salvaSpesa } from './services/spesaService.js';
 
 dotenv.config();
 
@@ -37,23 +36,12 @@ app.get('/', async (req, res) => {
 });
 
 app.post('/aggiungi-spesa', async (req, res) => {
-  const { data, importo, categoria, descrizione } = req.body;
-
-  if (!data || isNaN(importo) || !categoria || !descrizione) {
-    return res.status(400).send('Campi mancanti');
-  }
-
-  const filePath = path.resolve(__dirname, '..', process.env.MOVIMENTI_PATH);
-  const riga = `\n${data},-${importo},${categoria},"${descrizione.replace(/"/g, '""')}"`;
-
   try {
-    fs.appendFileSync(filePath, riga, 'utf8');
+    await salvaSpesa(req.body);
     res.status(200).send('OK');
   } catch (err) {
-    console.error('Errore durante scrittura:', err);
-    if (!res.headersSent) {
-      res.status(500).send('Errore interno');
-    }
+    console.error('❌ Errore salvataggio spesa:', err.message);
+    res.status(500).send('Errore durante il salvataggio');
   }
 });
 
