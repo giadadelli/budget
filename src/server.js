@@ -7,6 +7,7 @@ import fs from 'fs';
 import bodyParser from 'body-parser';
 import { utility } from './utility.js';
 import csv from 'csv-parser';
+import { salvaAccantonamenti } from './services/accantonamentoService.js';
 
 dotenv.config();
 
@@ -57,69 +58,12 @@ app.post('/aggiungi-spesa', async (req, res) => {
 });
 
 app.post('/aggiungi-accantonamenti', async (req, res) => {
-  const { movimenti, incremento, data } = req.body;
-
-  if (!Array.isArray(movimenti) || movimenti.length === 0 || isNaN(incremento) || !data) {
-    return res.status(400).send('Dati non validi');
-  }  
-
-  const movimentiPath = path.resolve(__dirname, '..', process.env.MOVIMENTI_PATH);
-  const saldoPath = path.resolve(__dirname, '..', process.env.SALDO_PATH);
-
-  let dataInput;
-  // Salva i movimenti
-  const righe = movimenti.map(m => {
-    const descrizione = m.descrizione.replace(/"/g, '""');
-    return `\n${m.data},${m.importo},${m.categoria},"${descrizione}"`;
-  }).join('');
-
   try {
-    fs.appendFileSync(movimentiPath, righe, 'utf8');
+    await salvaAccantonamenti(req.body);
+    res.status(200).send('OK');
   } catch (err) {
-    console.error('❌ Errore scrivendo i movimenti:', err);
-    return res.status(500).send('Errore scrittura movimenti');
-  }
-
-  // Leggi saldo più recente
-  let ultimoSaldo = 0;
-  try {
-    const records = [];
-    let dataInput;
-    fs.createReadStream(saldoPath)
-      .pipe(csv())
-      .on('data', (row) => {
-        const data = row.data?.trim();
-        const importo = parseFloat(row.importo);
-        if (data && !isNaN(importo)) {
-          records.push({ data, importo });
-        }
-      })
-      .on('end', () => {
-        if (records.length > 0) {
-          records.sort((a, b) => new Date(b.data) - new Date(a.data));
-          ultimoSaldo = records[0].importo;
-        }
-
-        // Calcola nuovo saldo e scrivi su saldo.csv
-        const nuovoSaldo = ultimoSaldo + incremento;
-        const nuovaRiga = `\n${data},${nuovoSaldo}`;
-
-        try {
-          fs.appendFileSync(saldoPath, nuovaRiga, 'utf8');
-          res.status(200).send('OK');
-        } catch (err) {
-          console.error('❌ Errore scrivendo il saldo:', err);
-          res.status(500).send('Errore scrittura saldo');
-        }
-      })
-      .on('error', err => {
-        console.error('❌ Errore leggendo il saldo:', err);
-        res.status(500).send('Errore lettura saldo');
-      });
-
-  } catch (err) {
-    console.error('❌ Errore generico:', err);
-    res.status(500).send('Errore interno');
+    console.error('❌ Errore accantonamento:', err.message);
+    res.status(500).send('Errore durante il salvataggio');
   }
 });
 
