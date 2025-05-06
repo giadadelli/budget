@@ -1,56 +1,66 @@
 {
     "emergenza": {
+        "titolo": "Emergenza",
         "tipo": "fondo",
         "obiettivo": 10000,
         "frequenza": "mensile",
         "importo": 300
     },
     "salute": {
+        "titolo": "Salute",
         "tipo": "fondo",
         "obiettivo": 500,
         "frequenza": "mensile",
         "importo": 100
     },
     "casa": {
+        "titolo": "Lavori casa",
         "tipo": "fondo",
         "obiettivo": 500,
         "frequenza": "mensile",
         "importo": 100
     },
     "vacanze": {
+        "titolo": "Vacanze",
         "tipo": "fondo",
         "obiettivo": 2400,
         "frequenza": "mensile",
         "importo": 300
     },
     "yoga": {
+        "titolo": "Yoga",
         "tipo": "fondo",
         "obiettivo": 300,
         "frequenza": "mensile",
         "importo": 25
     },
     "sito": {
+        "titolo": "Sito",
         "tipo": "fondo",
         "obiettivo": 300,
         "frequenza": "mensile",
         "importo": 25
     },
     "regali": {
+        "titolo": "Regali",
         "tipo": "busta",
         "frequenza": "annuale",
         "importo": 1500
     },
     "tasse": {
+        "titolo": "Tasse",
         "tipo": "busta",
         "frequenza": "mensile",
         "importo": 50
     },
     "spese-comuni": {
+        "titolo": "Spese casa",
         "tipo": "busta",
         "frequenza": "mensile",
         "importo": 1300
     },
     "iliad": {
+        "titolo": "Iliad",
         "tipo": "busta",
         "frequenza": "mensile",
         "importo": 8

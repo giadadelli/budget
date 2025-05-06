@@ -136,7 +136,7 @@ function generaDialogSmistamento(importoTotale) {
 
     somma += valoreDefault;
 
-    let label = cat.nome;
+    let label = cat.titolo;
     if (cat.tipo === 'fondo') {
       label += ` (${attuale}/${cat.obiettivo})`;
     }

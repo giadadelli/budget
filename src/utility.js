@@ -80,6 +80,7 @@ async function calcolaSituazione() {
     const info = accantonamenti[categoria];
     const voce = {
       nome: categoria,
+      titolo: info.titolo || categoria,
       attuale: valore,
       ...info
     };

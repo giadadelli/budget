@@ -79,7 +79,7 @@
         Categoria:
         <select name="categoria" required class="border p-1 rounded w-full">
           <% data.fondi.concat(data.buste).forEach(c => { %>
-            <option value="<%= c.nome %>"><%= c.nome %></option>
+            <option value="<%= c.nome %>"><%= c.titolo %></option>
           <% }) %>
         </select>
       </label>
@@ -150,13 +150,17 @@
     <% data.fondi.forEach((fondo, idx) => { %>
       <div class="chart-container">
         <strong style="color: <%= fondo.attuale >= fondo.obiettivo ? 'green' : 'red' %>">
-          <%= fondo.nome %>
+          <%= fondo.titolo %>
         </strong><br />
         
         <small>
           <%= fondo.attuale.toFixed(2) %> €
           (Obiettivo: <%= fondo.obiettivo %> €)
         </small>
+        <div style="background: #eee; height: 10px; border-radius: 6px; overflow: hidden; margin-top: 4px;">
+          <div style="height: 100%; width: <%= Math.min(100, (fondo.attuale / fondo.obiettivo) * 100).toFixed(1) %>%; background-color: <%= fondo.attuale >= fondo.obiettivo ? '#4CAF50' : '#f87171' %>;">
+          </div>
+        </div>
         
         <canvas id="fondoChart<%= idx %>"></canvas>
       </div>
@@ -167,7 +171,7 @@
   <div class="row">
     <% data.buste.forEach((busta, idx) => { %>
       <div class="chart-container">
-        <strong><%= busta.nome %></strong><br />
+        <strong><%= busta.titolo %></strong><br />
         <small><%= busta.attuale.toFixed(2) %> €</small>
         <canvas id="bustaChart<%= idx %>"></canvas>
       </div>
@@ -179,7 +183,7 @@
       new Chart(document.getElementById('fondoChart<%= idx %>'), {
         type: 'pie',
         data: {
-          labels: ['<%= fondo.nome %>', 'Resto'],
+          labels: ['<%= fondo.titolo %>', 'Resto'],
           datasets: [{
             data: [<%= fondo.attuale %>, <%= data.saldo - fondo.attuale %>],
             backgroundColor: ['#4CAF50', '#ddd']
@@ -192,7 +196,7 @@
       new Chart(document.getElementById('bustaChart<%= idx %>'), {
         type: 'pie',
         data: {
-          labels: ['<%= busta.nome %>', 'Resto'],
+          labels: ['<%= busta.titolo %>', 'Resto'],
           datasets: [{
             data: [<%= busta.attuale %>, <%= data.saldo - busta.attuale %>],
             backgroundColor: ['#2196F3', '#ddd']
