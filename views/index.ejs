@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Situazione Finanziaria</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  
   <style>
     body {
       font-family: sans-serif;
@@ -30,12 +30,47 @@
 </head>
 <body>
   <h1>Situazione Finanziaria</h1>
-  <p>
-    <strong>Saldo:</strong> <%= data.saldo.toFixed(2) %> € 
-    di cui disponibile <%= data.avanzo.toFixed(2) %> €
-  </p>
-
-
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <p style="margin: 0;">
+      <strong>Saldo:</strong> <%= data.saldo.toFixed(2) %> € 
+      di cui disponibile <%= data.avanzo.toFixed(2) %> €
+    </p>
+  
+    <button id="btn-apri-dialog" class="p-2 bg-blue-600 text-white rounded-xl">
+      Aggiungi spesa
+    </button>
+  </div>
+  
+  <dialog id="dialog-spesa" class="rounded-xl p-4 border shadow-lg">
+    <form id="form-spesa" method="dialog" class="flex flex-col gap-2">
+      <label>
+        Data:
+        <input type="date" name="data" required class="border p-1 rounded w-full" />
+      </label>
+      <label>
+        Importo:
+        <input type="number" name="importo" step="0.01" required class="border p-1 rounded w-full" />
+      </label>
+      <label>
+        Categoria:
+        <select name="categoria" required class="border p-1 rounded w-full">
+          <% data.fondi.concat(data.buste).forEach(c => { %>
+            <option value="<%= c.nome %>"><%= c.nome %></option>
+          <% }) %>
+        </select>
+      </label>
+      <label>
+        Descrizione:
+        <input type="text" name="descrizione" required class="border p-1 rounded w-full" />
+      </label>
+  
+      <div class="flex gap-2 justify-end">
+        <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded">Salva</button>
+        <button type="button" id="btn-chiudi-dialog" class="bg-gray-400 text-white px-3 py-1 rounded">Annulla</button>
+      </div>
+    </form>
+  </dialog>
+  
   <h2>Fondi</h2>
   <div class="row">
     <% data.fondi.forEach((fondo, idx) => { %>
@@ -93,5 +128,6 @@
     <% }) %>
 
   </script>
+<script src="/script.js"></script>
 </body>
 </html>

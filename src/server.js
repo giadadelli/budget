@@ -26,6 +26,30 @@ app.get('/', async (req, res) => {
   }
 });
 
+import bodyParser from 'body-parser';
+app.use(bodyParser.json());
+
+import fs from 'fs';
+
+app.post('/aggiungi-spesa', async (req, res) => {
+  const { data, importo, categoria, descrizione } = req.body;
+
+  if (!data || isNaN(importo) || !categoria || !descrizione) {
+    return res.status(400).send('Campi mancanti');
+  }
+
+  const filePath = path.resolve(__dirname, '..', process.env.MOVIMENTI_PATH);
+  const riga = `\n${data},-${importo},${categoria},"${descrizione.replace(/"/g, '""')}"`;
+
+  try {
+    fs.appendFileSync(filePath, riga, 'utf8');
+    res.status(200).send('OK');
+  } catch (err) {
+    console.error('Errore durante scrittura:', err);
+    res.status(500).send('Errore interno');
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`✅ Server avviato su http://localhost:${PORT}`);
 });
