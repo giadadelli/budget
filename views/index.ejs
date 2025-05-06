@@ -28,6 +28,23 @@
     }
   </style>
 </head>
+
+<script>
+  window.__DATA__ = {
+    fondi: <%- JSON.stringify(data.fondi) %>,
+    buste: <%- JSON.stringify(data.buste) %>,
+    attuali: Object.fromEntries(
+      [...<%- JSON.stringify(data.fondi) %>, ...<%- JSON.stringify(data.buste) %>].map(x => [x.nome, x.attuale])
+    )
+  };
+</script>
+
+</script>
+<script>
+  window.__ACC__ = <%- JSON.stringify(accantonamenti) %>;
+</script>
+
+
 <body>
   <h1>Situazione Finanziaria</h1>
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
@@ -36,10 +53,17 @@
       di cui disponibile <%= data.avanzo.toFixed(2) %> €
     </p>
   
-    <button id="btn-apri-dialog" class="p-2 bg-blue-600 text-white rounded-xl">
-      Aggiungi spesa
-    </button>
+    <div style="display: flex; gap: 0.5rem;">
+      <button id="btn-apri-dialog-entrata" class="p-2 bg-green-600 text-white rounded-xl">
+        Aggiungi entrata
+      </button>
+      
+      <button id="btn-apri-dialog" class="p-2 bg-blue-600 text-white rounded-xl">
+        Aggiungi spesa
+      </button>
+    </div>
   </div>
+  
   
   <dialog id="dialog-spesa" class="rounded-xl p-4 border shadow-lg">
     <form id="form-spesa" method="dialog" class="flex flex-col gap-2">
@@ -70,6 +94,56 @@
       </div>
     </form>
   </dialog>
+
+  <dialog id="dialog-entrata">
+    <form id="form-entrata" method="dialog" class="flex flex-col gap-2">
+      <label>
+        Data:
+        <input type="date" name="data" required class="border p-1 rounded w-full" />
+      </label>
+      <label>
+        Importo:
+        <input type="number" name="importo" step="0.01" required class="border p-1 rounded w-full" />
+      </label>
+      <label>
+        Descrizione:
+        <input type="text" name="descrizione" required class="border p-1 rounded w-full" />
+      </label>
+      <div class="flex gap-2 justify-end">
+        <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded">Procedi</button>
+        <button type="button" id="btn-chiudi-dialog-entrata" class="bg-gray-400 text-white px-3 py-1 rounded">Annulla</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="dialog-smistamento">
+    <div>
+      <h3>Distribuisci l’importo</h3>
+      <table class="w-full text-sm my-3">
+        <thead>
+          <tr>
+            <th class="text-left">Categoria</th>
+            <th class="text-right">Accantonato</th>
+          </tr>
+        </thead>
+        <tbody id="smistamento-body">
+          <!-- righe generate via JS -->
+        </tbody>
+        <tfoot>
+          <tr>
+            <td><strong>Non accantonato</strong></td>
+            <td class="text-right"><strong id="non-accantonato">0.00 €</strong></td>
+          </tr>
+        </tfoot>
+      </table>
+      <div class="flex justify-end gap-2">
+        <button type="button" id="btn-salva-smistamento" class="bg-green-600 text-white px-3 py-1 rounded">Salva</button>
+        <button type="button" id="btn-chiudi-smistamento" class="bg-gray-400 text-white px-3 py-1 rounded">Annulla</button>
+      </div>
+      
+    </div>
+  </dialog>
+  
   
   <h2>Fondi</h2>
   <div class="row">

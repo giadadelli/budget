@@ -4,55 +4,11 @@ import csv from 'csv-parser';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 dotenv.config();
 const rootPath = path.resolve(__dirname, '..');
-
-export async function calcolaSituazione() {
-  const [accantonamenti, movimenti, saldo] = await Promise.all([
-    leggiAccantonamenti(),
-    leggiMovimenti(),
-    leggiSaldo()
-  ]);
-
-  const fondi = [];
-  const buste = [];
-  const sommePerCategoria = {};
-
-  movimenti.forEach(mov => {
-    const categoria = mov.categoria;
-    if (!accantonamenti[categoria]) {
-      console.log(`⚠️ Categoria sconosciuta nel movimento: ${categoria}`);
-      return;
-    }
-
-    sommePerCategoria[categoria] = (sommePerCategoria[categoria] || 0) + mov.importo;
-  });
-
-  for (const [categoria, valore] of Object.entries(sommePerCategoria)) {
-    const info = accantonamenti[categoria];
-    const voce = {
-      nome: categoria,
-      attuale: valore,
-      ...info
-    };
-    if (info.tipo === 'fondo') fondi.push(voce);
-    if (info.tipo === 'busta') buste.push(voce);
-  }
-
-  const totaleFondi = fondi.reduce((sum, f) => sum + f.attuale, 0);
-  const totaleBuste = buste.reduce((sum, b) => sum + b.attuale, 0);
-  const avanzo = saldo - totaleFondi - totaleBuste;
-
-  return {
-    saldo,
-    fondi,
-    buste,
-    avanzo
-  };
-}
 
 function leggiAccantonamenti() {
   const filePath = path.join(rootPath, process.env.ACCANTONAMENTI_PATH);
@@ -98,3 +54,54 @@ function leggiSaldo() {
       .on('error', reject);
   });
 }
+
+async function calcolaSituazione() {
+  const [accantonamenti, movimenti, saldo] = await Promise.all([
+    leggiAccantonamenti(),
+    leggiMovimenti(),
+    leggiSaldo()
+  ]);
+
+  const fondi = [];
+  const buste = [];
+  const sommePerCategoria = {};
+
+  movimenti.forEach(mov => {
+    const categoria = mov.categoria;
+    if (!accantonamenti[categoria]) {
+      console.log(`⚠️ Categoria sconosciuta nel movimento: ${categoria}`);
+      return;
+    }
+
+    sommePerCategoria[categoria] = (sommePerCategoria[categoria] || 0) + mov.importo;
+  });
+
+  for (const [categoria, valore] of Object.entries(sommePerCategoria)) {
+    const info = accantonamenti[categoria];
+    const voce = {
+      nome: categoria,
+      attuale: valore,
+      ...info
+    };
+    if (info.tipo === 'fondo') fondi.push(voce);
+    if (info.tipo === 'busta') buste.push(voce);
+  }
+
+  const totaleFondi = fondi.reduce((sum, f) => sum + f.attuale, 0);
+  const totaleBuste = buste.reduce((sum, b) => sum + b.attuale, 0);
+  const avanzo = saldo - totaleFondi - totaleBuste;
+
+  return {
+    saldo,
+    fondi,
+    buste,
+    avanzo
+  };
+}
+
+export const utility = {
+  leggiAccantonamenti,
+  leggiMovimenti,
+  leggiSaldo,
+  calcolaSituazione
+};

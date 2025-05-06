@@ -49,5 +49,10 @@
         "tipo": "busta",
         "frequenza": "mensile",
         "importo": 1300
+    },
+    "iliad": {
+        "tipo": "busta",
+        "frequenza": "mensile",
+        "importo": 8
     }
 }
