@@ -30,14 +30,25 @@
 </head>
 <body>
   <h1>Situazione Finanziaria</h1>
-  <p><strong>Saldo:</strong> <%= data.saldo.toFixed(2) %> €</p>
+  <p>
+    <strong>Saldo:</strong> <%= data.saldo.toFixed(2) %> € 
+    di cui disponibile <%= data.avanzo.toFixed(2) %> €
+  </p>
+
 
   <h2>Fondi</h2>
   <div class="row">
     <% data.fondi.forEach((fondo, idx) => { %>
       <div class="chart-container">
-        <strong><%= fondo.nome %></strong><br />
-        <small><%= fondo.attuale.toFixed(2) %> €</small>
+        <strong style="color: <%= fondo.attuale >= fondo.obiettivo ? 'green' : 'red' %>">
+          <%= fondo.nome %>
+        </strong><br />
+        
+        <small>
+          <%= fondo.attuale.toFixed(2) %> €
+          (Obiettivo: <%= fondo.obiettivo %> €)
+        </small>
+        
         <canvas id="fondoChart<%= idx %>"></canvas>
       </div>
     <% }) %>
@@ -52,15 +63,6 @@
         <canvas id="bustaChart<%= idx %>"></canvas>
       </div>
     <% }) %>
-  </div>
-
-  <h2>Avanzo</h2>
-  <div class="row">
-    <div class="chart-container">
-      <strong>Avanzo</strong><br />
-      <small><%= data.avanzo.toFixed(2) %> €</small>
-      <canvas id="avanzoChart"></canvas>
-    </div>
   </div>
 
   <script>
@@ -90,16 +92,6 @@
       });
     <% }) %>
 
-    new Chart(document.getElementById('avanzoChart'), {
-      type: 'pie',
-      data: {
-        labels: ['Avanzo', 'Resto'],
-        datasets: [{
-          data: [<%= data.avanzo %>, <%= data.saldo - data.avanzo %>],
-          backgroundColor: ['#FF9800', '#ddd']
-        }]
-      }
-    });
   </script>
 </body>
 </html>
