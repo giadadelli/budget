@@ -22,7 +22,7 @@
   window.__SOTTOCATEGORIE__ = <%- JSON.stringify(sottocategorie.sottocategorie) %>;
 </script>
 
-<body>
+<body class="container">
   <h1>Situazione Finanziaria</h1>
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
     <p style="margin: 0;">
@@ -81,30 +81,24 @@
   </dialog>
 
   <dialog id="dialog-smistamento">
-    <div>
-      <h3>Distribuisci l’importo</h3>
-      <table class="w-full text-sm my-3">
-        <thead>
-          <tr>
-            <th class="text-left">Categoria</th>
-            <th class="text-right">Accantonato</th>
-          </tr>
-        </thead>
-        <tbody id="smistamento-body">
-          <!-- righe generate via JS -->
-        </tbody>
-        <tfoot>
-          <tr>
-            <td><strong>Non accantonato</strong></td>
-            <td class="text-right"><strong id="non-accantonato">0.00 €</strong></td>
-          </tr>
-        </tfoot>
-      </table>
-      <div class="flex justify-end gap-2">
-        <button type="button" id="btn-salva-smistamento" class="bg-green-600 text-white px-3 py-1 rounded">Salva</button>
-        <button type="button" id="btn-chiudi-smistamento" class="bg-gray-400 text-white px-3 py-1 rounded">Annulla</button>
-      </div>
-      
+    <div class="row">
+      <h6>Accantonamento sui fondi</h6>
+    </div>
+    <div id="smistamento-fondi-body">
+      <!-- righe generate via JS -->
+    </div>
+    <div class="row">
+      <h6>Accantonamento nelle buste</h6>
+    </div>
+    <div id="smistamento-buste-body">
+      <!-- righe generate via JS -->
+    </div>
+    <div class="row">
+      <h6>Disponibile (non accantonato): <span id="non-accantonato">0.00 €</span></h6>
+    </div>
+    <div style="display: flex; justify-content: space-between;">
+      <a id="btn-chiudi-smistamento" class="waves-effect waves-light btn">Annulla</a>
+      <a id="btn-salva-smistamento" class="waves-effect waves-light btn">Salva<i class="material-icons right">save</i></a>
     </div>
   </dialog>
   

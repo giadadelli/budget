@@ -72,7 +72,8 @@ const btnEntrata = document.getElementById('btn-apri-dialog-entrata');
 const dialogEntrata = document.getElementById('dialog-entrata');
 const dialogSmistamento = document.getElementById('dialog-smistamento');
 const formEntrata = document.getElementById('form-entrata');
-const smistamentoBody = document.getElementById('smistamento-body');
+const smistamentoFondiBody = document.getElementById('smistamento-fondi-body');
+const smistamentoBusteBody = document.getElementById('smistamento-buste-body');
 const nonAccantonatoOutput = document.getElementById('non-accantonato');
 const btnChiudiSmistamento = document.getElementById('btn-chiudi-smistamento');
 
@@ -142,7 +143,7 @@ document.getElementById('btn-salva-smistamento')?.addEventListener('click', asyn
 
 
 function generaDialogSmistamento(importoTotale) {
-  smistamentoBody.innerHTML = "";
+  smistamentoFondiBody.innerHTML = "";
   
   const acc = window.__ACC__;
   const categorie = Object.entries(acc).map(([nome, info]) => ({
@@ -152,7 +153,11 @@ function generaDialogSmistamento(importoTotale) {
 
   let somma = 0;
 
-  categorie.forEach((cat, idx) => {
+  //FONDO
+  const fondoContainer = document.createElement('div');
+  fondoContainer.className = "row";
+  smistamentoFondiBody.appendChild(fondoContainer);
+  categorie.filter((cat) => cat.tipo === 'fondo').forEach((cat, idx) => {
     const id = `input-${idx}`;
 
     let valoreDefault = 0;
@@ -160,33 +165,46 @@ function generaDialogSmistamento(importoTotale) {
     const attuale = window.__DATA__.attuali?.[cat.nome] ?? 0;
 
     if (cat.frequenza === 'mensile') {
-      if (cat.tipo === 'fondo') {
-        valoreDefault = attuale >= cat.obiettivo ? 0 : cat.importo;
-      } else if (cat.tipo === 'busta') {
-        valoreDefault = cat.importo;
-      }
+      valoreDefault = attuale >= cat.obiettivo ? 0 : cat.importo;
     }
+
+    somma += valoreDefault;
+
+    let label = cat.titolo + ` (${attuale}/${cat.obiettivo})`;
+    const colore = attuale >= cat.obiettivo ? 'green' : (cat.tipo === 'fondo' ? 'red' : 'inherit');
+
+    const col = document.createElement('div');
+    col.className = "col";
+    col.innerHTML = `
+      <p style="color: ${colore}">${label}</p>
+      <input type="number" value="${valoreDefault}" step="0.01" class="input-smistamento text-right border px-1 rounded" data-nome="${cat.nome}" />
+    `;
+    fondoContainer.appendChild(col);
+  });
+
+  
+  //BUSTA
+  const bustaContainer = document.createElement('div');
+  bustaContainer.className = "row";
+  smistamentoBusteBody.appendChild(bustaContainer);
+  categorie.filter((cat) => cat.tipo === 'busta').forEach((cat, idx) => {
+    const id = `input-${idx}`;
+
+    let valoreDefault = cat.frequenza === 'mensile' ? cat.importo : 0;
     
+    const attuale = window.__DATA__.attuali?.[cat.nome] ?? 0;
 
     somma += valoreDefault;
 
     let label = cat.titolo;
-    if (cat.tipo === 'fondo') {
-      label += ` (${attuale}/${cat.obiettivo})`;
-    }
 
-    const colore = (cat.tipo === 'fondo' && attuale >= cat.obiettivo) ? 'green' : (cat.tipo === 'fondo' ? 'red' : 'inherit');
-
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td style="color: ${colore}">${label}</td>
-      <td class="text-right">
-        <input type="number" value="${valoreDefault}" step="0.01" class="input-smistamento text-right border px-1 rounded" data-nome="${cat.nome}" style="width: 80px" />
-      </td>
+    const col = document.createElement('div');//<div class="col s1">1</div>
+    col.className = "col";
+    col.innerHTML = `
+      <p>${label}</p>
+      <input type="number" value="${valoreDefault}" step="0.01" class="input-smistamento text-right border px-1 rounded" data-nome="${cat.nome}" />
     `;
-
-    
-    smistamentoBody.appendChild(tr);
+    bustaContainer.appendChild(col);
   });
 
   aggiornaNonAccantonato(importoTotale);
