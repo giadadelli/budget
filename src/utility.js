@@ -76,17 +76,19 @@ async function calcolaSituazione() {
     sommePerCategoria[categoria] = (sommePerCategoria[categoria] || 0) + mov.importo;
   });
 
-  for (const [categoria, valore] of Object.entries(sommePerCategoria)) {
-    const info = accantonamenti[categoria];
+  for (const [categoria, info] of Object.entries(accantonamenti)) {
+    const valore = sommePerCategoria[categoria] || 0;
+  
     const voce = {
       nome: categoria,
-      titolo: info.titolo || categoria,
       attuale: valore,
       ...info
     };
+  
     if (info.tipo === 'fondo') fondi.push(voce);
     if (info.tipo === 'busta') buste.push(voce);
   }
+  
 
   const totaleFondi = fondi.reduce((sum, f) => sum + f.attuale, 0);
   const totaleBuste = buste.reduce((sum, b) => sum + b.attuale, 0);
