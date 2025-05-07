@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <title>Situazione Finanziaria</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="budget.css">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -22,7 +21,7 @@
   window.__SOTTOCATEGORIE__ = <%- JSON.stringify(sottocategorie.sottocategorie) %>;
 </script>
 
-<body class="container">
+<body class="">
   <h1>Situazione Finanziaria</h1>
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
     <p style="margin: 0;">
@@ -38,7 +37,7 @@
   </div>
   
   
-  <dialog id="dialog-spesa" class="rounded-xl p-4 border shadow-lg">
+  <dialog id="dialog-spesa" class="rounded-xl p-4 border shadow-lg" style="height:auto; width:auto;">
     <form id="form-spesa" method="dialog" class="flex flex-col gap-4">
       <div id="spese-container" class="flex flex-col gap-4", style="margin: 10px">
         <!-- righe di spesa inserite via JS -->
@@ -86,7 +85,7 @@
     </form>
   </dialog>
 
-  <dialog id="dialog-smistamento">
+  <dialog id="dialog-smistamento" style="height:auto; width:auto;">
     <div class="row">
       <h6>Accantonamento sui fondi</h6>
     </div>
@@ -111,34 +110,42 @@
   
   <h2>Fondi</h2>
   <div class="row">
+    
     <% data.fondi.forEach((fondo, idx) => { %>
-      <div class="chart-container">
-        <strong style="color: <%= fondo.attuale >= fondo.obiettivo ? 'green' : 'red' %>">
-          <%= fondo.titolo %>
-        </strong><br />
-        
-        <small>
-          <%= fondo.attuale.toFixed(2) %> €
-          (Obiettivo: <%= fondo.obiettivo %> €)
-        </small>
-        <div style="background: #eee; height: 10px; border-radius: 6px; overflow: hidden; margin-top: 4px;">
-          <div style="height: 100%; width: <%= Math.min(100, (fondo.attuale / fondo.obiettivo) * 100).toFixed(1) %>%; background-color: <%= fondo.attuale >= fondo.obiettivo ? '#4CAF50' : '#f87171' %>;">
+      <div class="col">
+        <div class="card blue-grey darken-1">
+          <div class="card-content white-text">
+            <span class="card-title"><%= fondo.titolo %></span>
+            <%= fondo.attuale %> € / <%= fondo.obiettivo %> €
+            <div class="progress">
+              <div class="determinate" style="width: <%= (fondo.attuale / fondo.obiettivo) * 100 %>%"></div>
+            </div>
+            Incidenza sul saldo
+            <div class="progress">
+              <div class="determinate orange" style="width: <%= (fondo.attuale / data.saldo) * 100 %>%"></div>
+            </div>
           </div>
         </div>
-        
-        <canvas id="fondoChart<%= idx %>"></canvas>
       </div>
+
     <% }) %>
   </div>
 
   <h2>Buste</h2>
   <div class="row">
     <% data.buste.forEach((busta, idx) => { %>
-      <div class="chart-container">
-        <strong><%= busta.titolo %></strong><br />
-        <small><%= busta.attuale.toFixed(2) %> €</small>
-        <canvas id="bustaChart<%= idx %>"></canvas>
+      <div class="col">
+        <div class="card teal darken-1">
+          <div class="card-content white-text">
+            <span class="card-title"><%= busta.titolo %></span>
+            Incidenza sul saldo
+            <div class="progress">
+              <div class="determinate orange" style="width: <%= (busta.attuale / data.saldo) * 100 %>%"></div>
+            </div>
+          </div>
+        </div>
       </div>
+
     <% }) %>
   </div>
 
@@ -146,32 +153,6 @@
     document.addEventListener('DOMContentLoaded', function() {
       M.Datepicker.init(document.querySelectorAll('.datepicker'), {"autoClose": true, "format": "dd-mm-yyyy"});
     });
-
-    <% data.fondi.forEach((fondo, idx) => { %>
-      new Chart(document.getElementById('fondoChart<%= idx %>'), {
-        type: 'pie',
-        data: {
-          labels: ['<%= fondo.titolo %>', 'Resto'],
-          datasets: [{
-            data: [<%= fondo.attuale %>, <%= data.saldo - fondo.attuale %>],
-            backgroundColor: ['#4CAF50', '#ddd']
-          }]
-        }
-      });
-    <% }) %>
-
-    <% data.buste.forEach((busta, idx) => { %>
-      new Chart(document.getElementById('bustaChart<%= idx %>'), {
-        type: 'pie',
-        data: {
-          labels: ['<%= busta.titolo %>', 'Resto'],
-          datasets: [{
-            data: [<%= busta.attuale %>, <%= data.saldo - busta.attuale %>],
-            backgroundColor: ['#2196F3', '#ddd']
-          }]
-        }
-      });
-    <% }) %>
 
   </script>
 <script src="/script.js"></script>
