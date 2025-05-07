@@ -229,51 +229,55 @@ function aggiornaNonAccantonato(importoTotale) {
 
 function creaRigaSpesa(defaultCategoria = 'altro') {
   const wrapper = document.createElement('div');
-  wrapper.className = 'riga-spesa flex flex-row gap-2 items-end border-b pb-4 flex-wrap';
+  wrapper.className = "row riga-spesa";//'riga-spesa flex flex-row gap-2 items-end border-b pb-4 flex-wrap';
 
   const id = crypto.randomUUID(); // id univoco per gestire le select
 
   wrapper.innerHTML = `
    
-    <label class="w-full">
-      Data:
-      <input type="date" name="data" required class="border p-1 rounded w-full" />
-    </label>
+    <div class="input-field col">
+      <input type="text" name="data" class="datepicker">
+      <label>Data</label>
+    </div>
   
 
-    <label>
-      Importo:
+    <div class="input-field col">
       <input type="number" name="importo" step="0.01" required class="border p-1 rounded w-full" />
-    </label>
+      <label>Importo</label>
+    </div>
 
-    <label>
-      Categoria:
+    
+    <div class="input-field col">
       <select name="categoria" data-id="${id}" required class="border p-1 rounded w-full">
         ${[...window.__DATA__.fondi, ...window.__DATA__.buste]
           .map(c => `<option value="${c.nome}">${c.titolo}</option>`)
           .join('')}
         <option value="altro"${defaultCategoria === 'altro' ? ' selected' : ''}>Altro</option>
       </select>
-    </label>
+      <label>Categoria</label>
+    </div>
 
-    <label style="visibility: hidden; position: absolute;" data-sottocategoria="${id}">
-      Sottocategoria:
-      <select name="sottocategoria" class="border p-1 rounded w-full"></select>
-    </label>
+    <div class="col input-field" style="visibility: hidden; position: absolute;" data-sottocategoria="${id}">
+      <select name="sottocategoria" ></select>
+    </div>
 
-    <label>
-      Descrizione:
+    <div class="input-field col">
       <input type="text" name="descrizione" required class="border p-1 rounded w-full" />
-    </label>
-    <button type="button" class="btn-rimuovi-spesa text-red-600 text-sm px-2 ml-2" title="Rimuovi">❌</button>
+      <label>Descrizione</label>
+    </div>
+    <a id="btn-rimuovi-spesa" class="waves-effect waves-light btn red"><i class="material-icons">delete</i></a>
+    
   `;
 
-  wrapper.querySelector('.btn-rimuovi-spesa')?.addEventListener('click', () => {
+  wrapper.querySelector('#btn-rimuovi-spesa')?.addEventListener('click', () => {
     wrapper.remove();
   });
 
 
   speseContainer.appendChild(wrapper);
+
+  M.FormSelect.init(document.querySelectorAll('select'), {});
+  M.Datepicker.init(document.querySelectorAll('.datepicker'), {"autoClose": true});
 
   const categoriaSelect = wrapper.querySelector(`select[name="categoria"]`);
   const sottocategoriaWrapper = wrapper.querySelector(`[data-sottocategoria="${id}"]`);

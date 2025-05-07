@@ -44,13 +44,16 @@
         <!-- righe di spesa inserite via JS -->
       </div>
     
-      <button type="button" id="aggiungi-riga-spesa" class="bg-blue-200 text-blue-900 px-2 py-1 rounded self-start">
-        + Aggiungi spesa
-      </button>
+      <div class="row">
+        <a id="aggiungi-riga-spesa" class="waves-effect waves-light btn">Aggiungi spesa<i class="material-icons right">add</i></a>
+      </div>
     
-      <div class="flex gap-2 justify-end">
-        <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded">Salva</button>
-        <button type="button" id="btn-chiudi-dialog" class="bg-gray-400 text-white px-3 py-1 rounded">Annulla</button>
+      <div class="flex gap-2 justify-end" style="display: flex; justify-content: space-between;">
+        <a id="btn-chiudi-dialog" class="waves-effect waves-light btn">Annulla</a>
+        
+        <button class="btn waves-effect waves-light" type="submit" name="action">Salva
+          <i class="material-icons right">save</i>
+        </button>
       </div>
     </form>
     
