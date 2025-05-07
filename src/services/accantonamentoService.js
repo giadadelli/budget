@@ -14,11 +14,12 @@ export async function salvaAccantonamenti({ movimenti, incremento, data }) {
 
   const movimentiPath = path.join(root, process.env.MOVIMENTI_PATH);
   const saldoPath = path.join(root, process.env.SALDO_PATH);
+  const oggi = new Date().toISOString().slice(0, 10);
 
   // 1. Scrivi i movimenti
   const righe = movimenti.map(m => {
     const descrizione = m.descrizione.replace(/"/g, '""');
-    return `\n${m.data},${m.importo},${m.categoria},null,"${descrizione}"`;
+    return `\n${m.data},${m.importo},${m.categoria},null,"${descrizione}",${oggi}`;
   }).join('');
 
   fs.appendFileSync(movimentiPath, righe, 'utf8');
@@ -47,6 +48,6 @@ export async function salvaAccantonamenti({ movimenti, incremento, data }) {
 
   // 3. Scrivi il nuovo saldo
   const nuovoSaldo = ultimoSaldo + incremento;
-  const nuovaRiga = `\n${data},${nuovoSaldo}`;
+  const nuovaRiga = `\n${data},${nuovoSaldo},${oggi}`;
   fs.appendFileSync(saldoPath, nuovaRiga, 'utf8');
 }

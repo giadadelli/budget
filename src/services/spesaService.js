@@ -13,11 +13,12 @@ export async function salvaSpese(spese) {
 
   const movimentiPath = path.join(root, process.env.MOVIMENTI_PATH);
   const saldoPath = path.join(root, process.env.SALDO_PATH);
+  const oggi = new Date().toISOString().slice(0, 10);
 
   const righe = spese.map(sp => {
     const descrizione = sp.descrizione.replace(/"/g, '""');
     const sottocategoria = sp.sottocategoria ?? 'null';
-    return `\n${sp.data},-${sp.importo},${sp.categoria},${sottocategoria},"${descrizione}"`;
+    return `\n${sp.data},-${sp.importo},${sp.categoria},${sottocategoria},"${descrizione}",${oggi}`;
   }).join('');
 
   fs.appendFileSync(movimentiPath, righe, 'utf8');
@@ -38,7 +39,7 @@ export async function salvaSpese(spese) {
 
   const ultimoSaldo = records.sort((a, b) => new Date(b.data) - new Date(a.data))[0]?.importo ?? 0;
   const totaleSpese = spese.reduce((sum, s) => sum + s.importo, 0);
-  const nuovaRiga = `\n${spese[0].data},${ultimoSaldo - totaleSpese}`;
+  const nuovaRiga = `\n${spese[0].data},${ultimoSaldo - totaleSpese},${oggi}`;
   fs.appendFileSync(saldoPath, nuovaRiga, 'utf8');
 }
 
