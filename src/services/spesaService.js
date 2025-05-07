@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 const root = path.resolve(process.cwd());
 
-export function salvaSpesa({ data, importo, categoria, descrizione }) {
+export function salvaSpesa({ data, importo, categoria, descrizione, sottocategoria }) {
   if (!data || isNaN(importo) || !categoria || !descrizione) {
     throw new Error('Dati spesa non validi');
   }
@@ -14,8 +14,8 @@ export function salvaSpesa({ data, importo, categoria, descrizione }) {
   const movimentiPath = path.join(root, process.env.MOVIMENTI_PATH);
   const saldoPath = path.join(root, process.env.SALDO_PATH);
 
-  // 1. Salva la spesa nel file movimenti
-  const rigaSpesa = `\n${data},-${importo},${categoria},"${descrizione.replace(/"/g, '""')}"`;
+  const sottocat = sottocategoria ?? 'null';
+  const rigaSpesa = `\n${data},-${importo},${categoria},${sottocat},"${descrizione.replace(/"/g, '""')}"`;
   fs.appendFileSync(movimentiPath, rigaSpesa, 'utf8');
 
   // 2. Leggi il saldo più recente

@@ -24,8 +24,9 @@ app.get('/', async (req, res) => {
   try {
     const data = await utility.calcolaSituazione();
     const accantonamenti = await utility.leggiAccantonamenti();
+    const sottocategorie = await utility.leggiSottocategorie();
 
-    res.render('index', { data, accantonamenti });
+    res.render('index', { data, accantonamenti, sottocategorie });
   } catch (error) {
     console.error('❌ Errore nel calcolo della situazione:', error);
     if (!res.headersSent) {

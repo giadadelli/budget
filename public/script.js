@@ -1,5 +1,33 @@
+const sottocategorie = window.__SOTTOCATEGORIE__ || [];
+
+const selectCategoria = document.querySelector('select[name="categoria"]');
+const selectSottocategoria = document.querySelector('select[name="sottocategoria"]');
+const sottocategoriaWrapper = document.getElementById('sottocategoria-wrapper');
+
+selectCategoria?.addEventListener('change', () => {
+  if (selectCategoria.value === 'altro') {
+    sottocategoriaWrapper.style.visibility = 'visible';
+    sottocategoriaWrapper.style.position = 'static';
+    selectSottocategoria.innerHTML = sottocategorie
+      .map(s => `<option value="${s.chiave}">${s.titolo}</option>`)
+      .join('');
+  } else {
+    sottocategoriaWrapper.style.visibility = 'hidden';
+    sottocategoriaWrapper.style.position = 'absolute';
+    selectSottocategoria.innerHTML = '';
+  }
+});
+
+
 document.getElementById('btn-apri-dialog').addEventListener('click', () => {
     document.getElementById('dialog-spesa').showModal();
+    selectCategoria.value = 'altro';
+    sottocategoriaWrapper.style.visibility = 'visible';
+    sottocategoriaWrapper.style.position = 'static';
+    selectSottocategoria.innerHTML = sottocategorie
+      .map(s => `<option value="${s.chiave}">${s.titolo}</option>`)
+      .join('');
+
   });
   
   document.getElementById('btn-chiudi-dialog').addEventListener('click', () => {
@@ -13,8 +41,10 @@ document.getElementById('btn-apri-dialog').addEventListener('click', () => {
       data: form.data.value,
       importo: parseFloat(form.importo.value),
       categoria: form.categoria.value,
+      sottocategoria: form.categoria.value === 'altro' ? form.sottocategoria.value : null,
       descrizione: form.descrizione.value
     };
+    
   
     try {
       const res = await fetch('/aggiungi-spesa', {

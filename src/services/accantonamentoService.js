@@ -18,7 +18,7 @@ export async function salvaAccantonamenti({ movimenti, incremento, data }) {
   // 1. Scrivi i movimenti
   const righe = movimenti.map(m => {
     const descrizione = m.descrizione.replace(/"/g, '""');
-    return `\n${m.data},${m.importo},${m.categoria},"${descrizione}"`;
+    return `\n${m.data},${m.importo},${m.categoria},null,"${descrizione}"`;
   }).join('');
 
   fs.appendFileSync(movimentiPath, righe, 'utf8');

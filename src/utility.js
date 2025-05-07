@@ -69,7 +69,7 @@ async function calcolaSituazione() {
   movimenti.forEach(mov => {
     const categoria = mov.categoria;
     if (!accantonamenti[categoria]) {
-      console.log(`⚠️ Categoria sconosciuta nel movimento: ${categoria}`);
+      //console.log(`⚠️ Categoria sconosciuta nel movimento: ${categoria}`);
       return;
     }
 
@@ -102,9 +102,17 @@ async function calcolaSituazione() {
   };
 }
 
+function leggiSottocategorie() {
+  const filePath = path.join(rootPath, process.env.SOTTOCATEGORIE_PATH);
+  const raw = fs.readFileSync(filePath);
+  return JSON.parse(raw);
+}
+
+
 export const utility = {
   leggiAccantonamenti,
   leggiMovimenti,
   leggiSaldo,
-  calcolaSituazione
+  calcolaSituazione,
+  leggiSottocategorie
 };

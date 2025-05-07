@@ -16,6 +16,7 @@
     )
   };
   window.__ACC__ = <%- JSON.stringify(accantonamenti) %>;
+  window.__SOTTOCATEGORIE__ = <%- JSON.stringify(sottocategorie.sottocategorie) %>;
 </script>
 
 <body>
@@ -54,8 +55,15 @@
           <% data.fondi.concat(data.buste).forEach(c => { %>
             <option value="<%= c.nome %>"><%= c.titolo %></option>
           <% }) %>
+          <option value="altro" selected>Altro</option>
         </select>
       </label>
+      <label id="sottocategoria-wrapper" style="visibility: hidden; position: absolute;">
+        Sottocategoria:
+        <select name="sottocategoria" class="border p-1 rounded w-full">
+          <!-- popolato da JS -->
+        </select>
+      </label>      
       <label>
         Descrizione:
         <input type="text" name="descrizione" required class="border p-1 rounded w-full" />
