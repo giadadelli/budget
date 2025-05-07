@@ -6,49 +6,39 @@ import dotenv from 'dotenv';
 dotenv.config();
 const root = path.resolve(process.cwd());
 
-export function salvaSpesa({ data, importo, categoria, descrizione, sottocategoria }) {
-  if (!data || isNaN(importo) || !categoria || !descrizione) {
-    throw new Error('Dati spesa non validi');
+export async function salvaSpese(spese) {
+  if (!Array.isArray(spese) || spese.length === 0) {
+    throw new Error('Nessuna spesa da salvare');
   }
 
   const movimentiPath = path.join(root, process.env.MOVIMENTI_PATH);
   const saldoPath = path.join(root, process.env.SALDO_PATH);
 
-  const sottocat = sottocategoria ?? 'null';
-  const rigaSpesa = `\n${data},-${importo},${categoria},${sottocat},"${descrizione.replace(/"/g, '""')}"`;
-  fs.appendFileSync(movimentiPath, rigaSpesa, 'utf8');
+  const righe = spese.map(sp => {
+    const descrizione = sp.descrizione.replace(/"/g, '""');
+    const sottocategoria = sp.sottocategoria ?? 'null';
+    return `\n${sp.data},-${sp.importo},${sp.categoria},${sottocategoria},"${descrizione}"`;
+  }).join('');
 
-  // 2. Leggi il saldo più recente
-  const records = [];
-  return new Promise((resolve, reject) => {
+  fs.appendFileSync(movimentiPath, righe, 'utf8');
+
+  // Leggi saldo corrente
+  const records = await new Promise((resolve, reject) => {
+    const result = [];
     fs.createReadStream(saldoPath)
       .pipe(csv())
       .on('data', row => {
         const d = row.data?.trim();
         const i = parseFloat(row.importo);
-        if (d && !isNaN(i)) {
-          records.push({ data: d, importo: i });
-        }
+        if (d && !isNaN(i)) result.push({ data: d, importo: i });
       })
-      .on('end', () => {
-        let ultimoSaldo = 0;
-        if (records.length > 0) {
-          records.sort((a, b) => new Date(b.data) - new Date(a.data));
-          ultimoSaldo = records[0].importo;
-        }
-
-        // 3. Calcola il nuovo saldo
-        const nuovoSaldo = ultimoSaldo - importo;
-        const nuovaRigaSaldo = `\n${data},${nuovoSaldo}`;
-
-        try {
-          fs.appendFileSync(saldoPath, nuovaRigaSaldo, 'utf8');
-          resolve();
-        } catch (err) {
-          console.error('❌ Errore scrivendo il saldo:', err);
-          reject(err);
-        }
-      })
+      .on('end', () => resolve(result))
       .on('error', reject);
   });
+
+  const ultimoSaldo = records.sort((a, b) => new Date(b.data) - new Date(a.data))[0]?.importo ?? 0;
+  const totaleSpese = spese.reduce((sum, s) => sum + s.importo, 0);
+  const nuovaRiga = `\n${spese[0].data},${ultimoSaldo - totaleSpese}`;
+  fs.appendFileSync(saldoPath, nuovaRiga, 'utf8');
 }
+

@@ -40,40 +40,21 @@
   
   
   <dialog id="dialog-spesa" class="rounded-xl p-4 border shadow-lg">
-    <form id="form-spesa" method="dialog" class="flex flex-col gap-2">
-      <label>
-        Data:
-        <input type="date" name="data" required class="border p-1 rounded w-full" />
-      </label>
-      <label>
-        Importo:
-        <input type="number" name="importo" step="0.01" required class="border p-1 rounded w-full" />
-      </label>
-      <label>
-        Categoria:
-        <select name="categoria" required class="border p-1 rounded w-full">
-          <% data.fondi.concat(data.buste).forEach(c => { %>
-            <option value="<%= c.nome %>"><%= c.titolo %></option>
-          <% }) %>
-          <option value="altro" selected>Altro</option>
-        </select>
-      </label>
-      <label id="sottocategoria-wrapper" style="visibility: hidden; position: absolute;">
-        Sottocategoria:
-        <select name="sottocategoria" class="border p-1 rounded w-full">
-          <!-- popolato da JS -->
-        </select>
-      </label>      
-      <label>
-        Descrizione:
-        <input type="text" name="descrizione" required class="border p-1 rounded w-full" />
-      </label>
-  
+    <form id="form-spesa" method="dialog" class="flex flex-col gap-4">
+      <div id="spese-container" class="flex flex-col gap-4", style="margin: 10px">
+        <!-- righe di spesa inserite via JS -->
+      </div>
+    
+      <button type="button" id="aggiungi-riga-spesa" class="bg-blue-200 text-blue-900 px-2 py-1 rounded self-start">
+        + Aggiungi spesa
+      </button>
+    
       <div class="flex gap-2 justify-end">
         <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded">Salva</button>
         <button type="button" id="btn-chiudi-dialog" class="bg-gray-400 text-white px-3 py-1 rounded">Annulla</button>
       </div>
     </form>
+    
   </dialog>
 
   <dialog id="dialog-entrata">

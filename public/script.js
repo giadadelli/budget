@@ -4,6 +4,9 @@ const selectCategoria = document.querySelector('select[name="categoria"]');
 const selectSottocategoria = document.querySelector('select[name="sottocategoria"]');
 const sottocategoriaWrapper = document.getElementById('sottocategoria-wrapper');
 
+const speseContainer = document.getElementById('spese-container');
+const btnAggiungiRiga = document.getElementById('aggiungi-riga-spesa');
+
 selectCategoria?.addEventListener('change', () => {
   if (selectCategoria.value === 'altro') {
     sottocategoriaWrapper.style.visibility = 'visible';
@@ -20,51 +23,52 @@ selectCategoria?.addEventListener('change', () => {
 
 
 document.getElementById('btn-apri-dialog').addEventListener('click', () => {
-    document.getElementById('dialog-spesa').showModal();
-    selectCategoria.value = 'altro';
-    sottocategoriaWrapper.style.visibility = 'visible';
-    sottocategoriaWrapper.style.position = 'static';
-    selectSottocategoria.innerHTML = sottocategorie
-      .map(s => `<option value="${s.chiave}">${s.titolo}</option>`)
-      .join('');
+  speseContainer.innerHTML = ''; // reset
+  creaRigaSpesa(); // prima riga
+  document.getElementById('dialog-spesa').showModal();
+});
 
+btnAggiungiRiga.addEventListener('click', () => creaRigaSpesa());
+
+  
+document.getElementById('btn-chiudi-dialog').addEventListener('click', () => {
+  document.getElementById('dialog-spesa').close();
+});
+
+document.getElementById('form-spesa').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const spese = [...speseContainer.querySelectorAll('.riga-spesa')].map(wrapper => {
+    const data = wrapper.querySelector('input[name="data"]').value;
+    const importo = parseFloat(wrapper.querySelector('input[name="importo"]').value);
+    const categoria = wrapper.querySelector('select[name="categoria"]').value;
+    const descrizione = wrapper.querySelector('input[name="descrizione"]').value;
+    const sottocategoriaEl = wrapper.querySelector('select[name="sottocategoria"]');
+    const sottocategoria = categoria === 'altro' ? sottocategoriaEl.value : null;
+
+    return { data, importo, categoria, descrizione, sottocategoria };
   });
-  
-  document.getElementById('btn-chiudi-dialog').addEventListener('click', () => {
-    document.getElementById('dialog-spesa').close();
-  });
-  
-  document.getElementById('form-spesa').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const payload = {
-      data: form.data.value,
-      importo: parseFloat(form.importo.value),
-      categoria: form.categoria.value,
-      sottocategoria: form.categoria.value === 'altro' ? form.sottocategoria.value : null,
-      descrizione: form.descrizione.value
-    };
-    
-  
-    try {
-      const res = await fetch('/aggiungi-spesa', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-  
-      if (res.ok) {
-        location.reload();
-      } else {
-        alert('Errore durante il salvataggio');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Errore durante la richiesta');
+
+  try {
+    const res = await fetch('/aggiungi-spesa', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ spese })
+    });
+
+    if (res.ok) {
+      location.reload();
+    } else {
+      alert('Errore durante il salvataggio');
     }
-  });
+  } catch (err) {
+    console.error(err);
+    alert('Errore durante la richiesta');
+  }
+});
 
-  const btnEntrata = document.getElementById('btn-apri-dialog-entrata');
+
+const btnEntrata = document.getElementById('btn-apri-dialog-entrata');
 const dialogEntrata = document.getElementById('dialog-entrata');
 const dialogSmistamento = document.getElementById('dialog-smistamento');
 const formEntrata = document.getElementById('form-entrata');
@@ -203,4 +207,74 @@ function aggiornaNonAccantonato(importoTotale) {
 
   const resto = (importoTotale - totaleAccantonato).toFixed(2);
   nonAccantonatoOutput.textContent = `${resto} €`;
+}
+
+function creaRigaSpesa(defaultCategoria = 'altro') {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'riga-spesa flex flex-row gap-2 items-end border-b pb-4 flex-wrap';
+
+  const id = crypto.randomUUID(); // id univoco per gestire le select
+
+  wrapper.innerHTML = `
+   
+    <label class="w-full">
+      Data:
+      <input type="date" name="data" required class="border p-1 rounded w-full" />
+    </label>
+  
+
+    <label>
+      Importo:
+      <input type="number" name="importo" step="0.01" required class="border p-1 rounded w-full" />
+    </label>
+
+    <label>
+      Categoria:
+      <select name="categoria" data-id="${id}" required class="border p-1 rounded w-full">
+        ${[...window.__DATA__.fondi, ...window.__DATA__.buste]
+          .map(c => `<option value="${c.nome}">${c.titolo}</option>`)
+          .join('')}
+        <option value="altro"${defaultCategoria === 'altro' ? ' selected' : ''}>Altro</option>
+      </select>
+    </label>
+
+    <label style="visibility: hidden; position: absolute;" data-sottocategoria="${id}">
+      Sottocategoria:
+      <select name="sottocategoria" class="border p-1 rounded w-full"></select>
+    </label>
+
+    <label>
+      Descrizione:
+      <input type="text" name="descrizione" required class="border p-1 rounded w-full" />
+    </label>
+    <button type="button" class="btn-rimuovi-spesa text-red-600 text-sm px-2 ml-2" title="Rimuovi">❌</button>
+  `;
+
+  wrapper.querySelector('.btn-rimuovi-spesa')?.addEventListener('click', () => {
+    wrapper.remove();
+  });
+
+
+  speseContainer.appendChild(wrapper);
+
+  const categoriaSelect = wrapper.querySelector(`select[name="categoria"]`);
+  const sottocategoriaWrapper = wrapper.querySelector(`[data-sottocategoria="${id}"]`);
+  const sottocategoriaSelect = sottocategoriaWrapper.querySelector('select');
+
+  function aggiornaSottocategoria() {
+    if (categoriaSelect.value === 'altro') {
+      sottocategoriaWrapper.style.visibility = 'visible';
+      sottocategoriaWrapper.style.position = 'static';
+      sottocategoriaSelect.innerHTML = window.__SOTTOCATEGORIE__
+        .map(s => `<option value="${s.chiave}">${s.titolo}</option>`)
+        .join('');
+    } else {
+      sottocategoriaWrapper.style.visibility = 'hidden';
+      sottocategoriaWrapper.style.position = 'absolute';
+      sottocategoriaSelect.innerHTML = '';
+    }
+  }
+
+  categoriaSelect.addEventListener('change', aggiornaSottocategoria);
+  aggiornaSottocategoria(); // iniziale
 }

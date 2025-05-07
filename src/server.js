@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import { utility } from './utility.js';
 import { salvaAccantonamenti } from './services/accantonamentoService.js';
-import { salvaSpesa } from './services/spesaService.js';
+import { salvaSpese } from './services/spesaService.js';
 
 dotenv.config();
 
@@ -35,15 +35,18 @@ app.get('/', async (req, res) => {
   }
 });
 
+
+
 app.post('/aggiungi-spesa', async (req, res) => {
   try {
-    await salvaSpesa(req.body);
+    await salvaSpese(req.body.spese);
     res.status(200).send('OK');
   } catch (err) {
-    console.error('❌ Errore salvataggio spesa:', err.message);
+    console.error('❌ Errore salvataggio spese:', err.message);
     res.status(500).send('Errore durante il salvataggio');
   }
 });
+
 
 app.post('/aggiungi-accantonamenti', async (req, res) => {
   try {
