@@ -5,6 +5,8 @@
   <title>Situazione Finanziaria</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="budget.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 </head>
 
 <script>
@@ -28,13 +30,9 @@
     </p>
   
     <div style="display: flex; gap: 0.5rem;">
-      <button id="btn-apri-dialog-entrata" class="p-2 bg-green-600 text-white rounded-xl">
-        Aggiungi entrata
-      </button>
+      <a id="btn-apri-dialog-entrata" class="waves-effect waves-light btn">Nuova entrata</a>
+      <a id="btn-apri-dialog" class="waves-effect waves-light btn">Traccia spese</a>
       
-      <button id="btn-apri-dialog" class="p-2 bg-blue-600 text-white rounded-xl">
-        Aggiungi spesa
-      </button>
     </div>
   </div>
   
@@ -169,5 +167,6 @@
 
   </script>
 <script src="/script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </body>
 </html>
