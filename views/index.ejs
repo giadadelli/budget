@@ -61,18 +61,21 @@
 
   <dialog id="dialog-entrata">
     <form id="form-entrata" method="dialog" class="flex flex-col gap-2">
-      <label>
-        Data:
-        <input type="date" name="data" required class="border p-1 rounded w-full" />
-      </label>
-      <label>
-        Importo:
-        <input type="number" name="importo" step="0.01" required class="border p-1 rounded w-full" />
-      </label>
-      <label>
-        Descrizione:
-        <input type="text" name="descrizione" required class="border p-1 rounded w-full" />
-      </label>
+      <div class="row">
+        <div class="input-field col">
+          <input type="text" class="datepicker" name="data">
+          <label>Data</label>
+        </div>
+        <div class="input-field col">
+          <input id="last_name" type="number" class="validate" name="importo">
+          <label for="last_name">Importo</label>
+        </div>
+        <div class="input-field col">
+          <input id="last_name" type="text" class="validate" name="descrizione">
+          <label for="last_name">Descrizione</label>
+        </div>
+      </div>
+      
       <div class="flex gap-2 justify-end" style="display: flex; justify-content: space-between;">
         <a id="btn-chiudi-dialog-entrata" class="waves-effect waves-light btn">Annulla</a>
         
@@ -140,6 +143,10 @@
   </div>
 
   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      M.Datepicker.init(document.querySelectorAll('.datepicker'), {"autoClose": true, "format": "dd-mm-yyyy"});
+    });
+
     <% data.fondi.forEach((fondo, idx) => { %>
       new Chart(document.getElementById('fondoChart<%= idx %>'), {
         type: 'pie',

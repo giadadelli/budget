@@ -277,7 +277,7 @@ function creaRigaSpesa(defaultCategoria = 'altro') {
   speseContainer.appendChild(wrapper);
 
   M.FormSelect.init(document.querySelectorAll('select'), {});
-  M.Datepicker.init(document.querySelectorAll('.datepicker'), {"autoClose": true});
+  M.Datepicker.init(document.querySelectorAll('.datepicker'), {"autoClose": true, "format": "dd-mm-yyyy"});
 
   const categoriaSelect = wrapper.querySelector(`select[name="categoria"]`);
   const sottocategoriaWrapper = wrapper.querySelector(`[data-sottocategoria="${id}"]`);
