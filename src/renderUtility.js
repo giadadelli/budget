@@ -1,8 +1,8 @@
-import fs from 'fs';
 import path from 'path';
-import csv from 'csv-parser';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
+import { movimentiService } from './services/movimentiService.js';
+import { accantonamentiService } from './services/accantonamentiService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,42 +10,11 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 const rootPath = path.resolve(__dirname, '..');
 
-function leggiAccantonamenti() {
-  const filePath = path.join(rootPath, process.env.ACCANTONAMENTI_PATH);
-  const raw = fs.readFileSync(filePath);
-  return JSON.parse(raw);
-}
-
-function leggiMovimenti() {
-  const filePath = path.join(rootPath, process.env.MOVIMENTI_PATH);
-  return new Promise((resolve, reject) => {
-    const results = [];
-    fs.createReadStream(filePath)
-      .pipe(csv())
-      .on('data', (data) => {
-        const importo = parseFloat(data.importo);
-        if (!isNaN(importo)) {
-          results.push({ ...data, importo });
-        }
-      })
-      .on('end', () => resolve(results))
-      .on('error', reject);
-  });
-}
-
-async function leggiSaldo() {
-  const movimenti = await Promise.resolve(leggiMovimenti());
-  return movimenti.reduce(
-    (accumulator, currentValue) => accumulator + currentValue.importo,
-    0,
-  );
-}
-
 async function calcolaSituazione() {
   const [accantonamenti, movimenti, saldo] = await Promise.all([
-    leggiAccantonamenti(),
-    leggiMovimenti(),
-    leggiSaldo()
+    accantonamentiService.getAccantonamenti(),
+    movimentiService.getMovimenti(),
+    movimentiService.getSaldo()
   ]);
 
   const fondi = [];
@@ -88,17 +57,6 @@ async function calcolaSituazione() {
   };
 }
 
-function leggiSottocategorie() {
-  const filePath = path.join(rootPath, process.env.SOTTOCATEGORIE_PATH);
-  const raw = fs.readFileSync(filePath);
-  return JSON.parse(raw);
-}
-
-
-export const utility = {
-  leggiAccantonamenti,
-  leggiMovimenti,
-  leggiSaldo,
-  calcolaSituazione,
-  leggiSottocategorie
+export const renderUtility = {
+  calcolaSituazione
 };
