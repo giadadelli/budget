@@ -22,17 +22,18 @@
 </script>
 
 <body class="">
-  <h1>Situazione Finanziaria</h1>
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-    <p style="margin: 0;">
-      <strong>Saldo:</strong> <%= data.saldo.toFixed(2) %> € 
-      di cui disponibile <%= data.avanzo.toFixed(2) %> €
-    </p>
-  
-    <div style="display: flex; gap: 0.5rem;">
+  <div class="row">
+    <h2 class="col">Situazione Finanziaria</h2>
+  </div>
+  <div class="row">
+    <div class="col">
+      <h4>Saldo: <%= data.saldo.toFixed(2) %> € di cui disponibile <%= data.avanzo.toFixed(2) %> €</h4>
+    </div> 
+  </div>
+  <div class="row">
+    <div class="col">
       <a id="btn-apri-dialog-entrata" class="waves-effect waves-light btn">Nuova entrata</a>
       <a id="btn-apri-dialog" class="waves-effect waves-light btn">Traccia spese</a>
-      
     </div>
   </div>
   
@@ -111,8 +112,12 @@
     </div>
   </dialog>
   
-  
-  <h2>Fondi</h2>
+  <div class="divider"></div>
+  <div class="row">
+    <div class="col">
+      <h4>Fondi</h4>
+    </div> 
+  </div>
   <div class="row">
     
     <% data.fondi.forEach((fondo, idx) => { %>
@@ -124,7 +129,7 @@
             <div class="progress">
               <div class="determinate" style="width: <%= (fondo.attuale / fondo.obiettivo) * 100 %>%"></div>
             </div>
-            Incidenza sul saldo
+            Incidenza sul saldo (<%= Math.round((fondo.attuale / data.saldo) * 100) %>%)
             <div class="progress">
               <div class="determinate orange" style="width: <%= (fondo.attuale / data.saldo) * 100 %>%"></div>
             </div>
@@ -135,14 +140,20 @@
     <% }) %>
   </div>
 
-  <h2>Buste</h2>
+  <div class="divider"></div>
+  <div class="row">
+    <div class="col">
+      <h4>Buste</h4>
+    </div> 
+  </div>
   <div class="row">
     <% data.buste.forEach((busta, idx) => { %>
       <div class="col">
         <div class="card teal darken-1">
           <div class="card-content white-text">
             <span class="card-title"><%= busta.titolo %></span>
-            Incidenza sul saldo
+            <div> <%= busta.attuale %>  € </div>
+            Incidenza sul saldo (<%= Math.round((busta.attuale / data.saldo).toFixed(2) * 100) %>%)
             <div class="progress">
               <div class="determinate orange" style="width: <%= (busta.attuale / data.saldo) * 100 %>%"></div>
             </div>
