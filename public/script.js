@@ -50,7 +50,7 @@ document.getElementById('form-spesa').addEventListener('submit', async (e) => {
   });
 
   try {
-    const res = await fetch('/aggiungi-spesa', {
+    const res = await fetch('/' + window.__CONTO__ + '/aggiungi-spesa', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ spese })
@@ -127,7 +127,7 @@ document.getElementById('btn-salva-smistamento')?.addEventListener('click', asyn
   }
 
   try {
-    const res = await fetch('/aggiungi-accantonamenti', {
+    const res = await fetch("/" + window.__CONTO__ + '/aggiungi-accantonamenti', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

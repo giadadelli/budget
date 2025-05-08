@@ -1,9 +1,9 @@
 import fs from 'fs';
 
+import { contiService } from './contiService.js';
 
-const fileSottocategorie = process.env.SOTTOCATEGORIE_PATH;
-
-function getSottocategorie() {
+function getSottocategorie(conto,) {
+    const fileSottocategorie = contiService.getSottocategorieFilePath(conto);
     const raw = fs.readFileSync(fileSottocategorie);
     return JSON.parse(raw);
 }

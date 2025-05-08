@@ -1,11 +1,8 @@
 import fs from 'fs';
-import dotenv from 'dotenv';
+import { contiService } from './contiService.js';
 
-const fileAccantonamenti = process.env.ACCANTONAMENTI_PATH;
-
-dotenv.config();
-
-function getAccantonamenti() {
+function getAccantonamenti(conto) {
+    const fileAccantonamenti = contiService.getAccantonamentiFilePath(conto);
     const raw = fs.readFileSync(fileAccantonamenti);
     return JSON.parse(raw);
 }

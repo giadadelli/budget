@@ -1,13 +1,10 @@
 import fs from 'fs';
 import csv from 'csv-parser';
-import dotenv from 'dotenv';
+import { contiService } from './contiService.js';
 
-dotenv.config();
+function getMovimenti(conto) {
+  const fileMovimenti = contiService.getMovimentiFilePath(conto);
 
-const fileMovimenti = process.env.MOVIMENTI_PATH;
-
-function getMovimenti() {
-  
   return new Promise((resolve, reject) => {
     const results = [];
     fs.createReadStream(fileMovimenti)
@@ -23,15 +20,15 @@ function getMovimenti() {
   });
 }
 
-async function getSaldo() {
-  const movimenti = await Promise.resolve(movimentiService.getMovimenti());
+async function getSaldo(conto) {
+  const movimenti = await Promise.resolve(movimentiService.getMovimenti(conto));
   return movimenti.reduce(
     (accumulator, currentValue) => accumulator + currentValue.importo,
     0,
   );
 }
 
-async function addSpese(spese) {
+async function addSpese(conto, spese) {
   if (!Array.isArray(spese) || spese.length === 0) {
     throw new Error('Nessuna spesa da salvare');
   }
@@ -44,10 +41,11 @@ async function addSpese(spese) {
     return `\n${sp.data},-${sp.importo},${sp.categoria},${sottocategoria},"${descrizione}",${oggi}`;
   }).join('');
   
+  const fileMovimenti = contiService.getMovimentiFilePath(conto);
   fs.appendFileSync(fileMovimenti, righe, 'utf8');
 }
 
-async function addEntrate({ movimenti, incremento, data }) {
+async function addEntrate(conto, {movimenti, incremento, data }) {
   if (!Array.isArray(movimenti) || movimenti.length === 0 || isNaN(incremento) || !data) {
     throw new Error('Dati non validi');
   }
@@ -60,6 +58,7 @@ async function addEntrate({ movimenti, incremento, data }) {
     return `\n${m.data},${m.importo},${m.categoria},null,"${descrizione}",${oggi}`;
   }).join('');
   
+  const fileMovimenti = contiService.getMovimentiFilePath(conto);
   fs.appendFileSync(fileMovimenti, righe, 'utf8');
 
 }

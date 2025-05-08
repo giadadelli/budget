@@ -1,20 +1,15 @@
-import path from 'path';
 import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
 import { movimentiService } from './services/movimentiService.js';
 import { accantonamentiService } from './services/accantonamentiService.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 dotenv.config();
-const rootPath = path.resolve(__dirname, '..');
 
-async function calcolaSituazione() {
+async function calcolaSituazione(conto) {
   const [accantonamenti, movimenti, saldo] = await Promise.all([
-    accantonamentiService.getAccantonamenti(),
-    movimentiService.getMovimenti(),
-    movimentiService.getSaldo()
+    accantonamentiService.getAccantonamenti(conto),
+    movimentiService.getMovimenti(conto),
+    movimentiService.getSaldo(conto)
   ]);
 
   const fondi = [];

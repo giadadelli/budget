@@ -2,136 +2,30 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <title>Situazione Finanziaria</title>
-  <link rel="stylesheet" href="budget.css">
+  <title>I tuoi conti</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <script>
-  window.__DATA__ = {
-    fondi: <%- JSON.stringify(data.fondi) %>,
-    buste: <%- JSON.stringify(data.buste) %>,
-    attuali: Object.fromEntries(
-      [...<%- JSON.stringify(data.fondi) %>, ...<%- JSON.stringify(data.buste) %>].map(x => [x.nome, x.attuale])
-    )
-  };
-  window.__ACC__ = <%- JSON.stringify(accantonamenti) %>;
-  window.__SOTTOCATEGORIE__ = <%- JSON.stringify(sottocategorie.sottocategorie) %>;
+  window.__CONTI__ = <%- JSON.stringify(conti) %>;
 </script>
 
-<body class="">
+<body class="container">
   <div class="row">
-    <h2 class="col">Situazione Finanziaria</h2>
-  </div>
-  <div class="row">
-    <div class="col">
-      <h4>Saldo: <%= data.saldo.toFixed(2) %> € di cui disponibile <%= data.avanzo.toFixed(2) %> €</h4>
-    </div> 
-  </div>
-  <div class="row">
-    <div class="col">
-      <a id="btn-apri-dialog-entrata" class="waves-effect waves-light btn">Nuova entrata</a>
-      <a id="btn-apri-dialog" class="waves-effect waves-light btn">Traccia spese</a>
-    </div>
+    <h2 class="col">Seleziona il conto su cui vuoi lavorare</h2>
   </div>
   
-  
-  <dialog id="dialog-spesa" class="rounded-xl p-4 border shadow-lg" style="height:auto; width:auto;">
-    <form id="form-spesa" method="dialog" class="flex flex-col gap-4">
-      <div id="spese-container" class="flex flex-col gap-4", style="margin: 10px">
-        <!-- righe di spesa inserite via JS -->
-      </div>
-    
-      <div class="row">
-        <a id="aggiungi-riga-spesa" class="waves-effect waves-light btn">Aggiungi spesa<i class="material-icons right">add</i></a>
-      </div>
-    
-      <div class="flex gap-2 justify-end" style="display: flex; justify-content: space-between;">
-        <a id="btn-chiudi-dialog" class="waves-effect waves-light btn">Annulla</a>
-        
-        <button class="btn waves-effect waves-light" type="submit" name="action">Salva
-          <i class="material-icons right">save</i>
-        </button>
-      </div>
-    </form>
-    
-  </dialog>
-
-  <dialog id="dialog-entrata">
-    <form id="form-entrata" method="dialog" class="flex flex-col gap-2">
-      <div class="row">
-        <div class="input-field col">
-          <input type="text" class="datepicker" name="data">
-          <label>Data</label>
-        </div>
-        <div class="input-field col">
-          <input id="last_name" type="number" class="validate" name="importo">
-          <label for="last_name">Importo</label>
-        </div>
-        <div class="input-field col">
-          <input id="last_name" type="text" class="validate" name="descrizione">
-          <label for="last_name">Descrizione</label>
-        </div>
-      </div>
-      
-      <div class="flex gap-2 justify-end" style="display: flex; justify-content: space-between;">
-        <a id="btn-chiudi-dialog-entrata" class="waves-effect waves-light btn">Annulla</a>
-        
-        <button class="btn waves-effect waves-light" type="submit" name="action">Procedi
-          <i class="material-icons right">send</i>
-        </button>
-      </div>
-    </form>
-  </dialog>
-
-  <dialog id="dialog-smistamento" style="height:auto; width:auto;">
-    <div class="row">
-      <h6>Accantonamento sui fondi</h6>
-    </div>
-    <div id="smistamento-fondi-body">
-      <!-- righe generate via JS -->
-    </div>
-    <div class="row">
-      <h6>Accantonamento nelle buste</h6>
-    </div>
-    <div id="smistamento-buste-body">
-      <!-- righe generate via JS -->
-    </div>
-    <div class="row">
-      <div class="col">
-        <p>Disponibile (non accantonato)</p>
-        <input id="non-accantonato" type="number" step="1" class="text-right border px-1 rounded"  />
-      </div>
-      
-    </div>
-    <div style="display: flex; justify-content: space-between;">
-      <a id="btn-chiudi-smistamento" class="waves-effect waves-light btn">Annulla</a>
-      <a id="btn-salva-smistamento" class="waves-effect waves-light btn">Salva<i class="material-icons right">save</i></a>
-    </div>
-  </dialog>
-  
-  <div class="divider"></div>
-  <div class="row">
-    <div class="col">
-      <h4>Fondi</h4>
-    </div> 
-  </div>
   <div class="row">
     
-    <% data.fondi.forEach((fondo, idx) => { %>
+    <% conti.forEach((conto, idx) => { %>
       <div class="col">
         <div class="card blue-grey darken-1">
           <div class="card-content white-text">
-            <span class="card-title"><%= fondo.titolo %></span>
-            <%= fondo.attuale %> € / <%= fondo.obiettivo %> €
-            <div class="progress">
-              <div class="determinate" style="width: <%= (fondo.attuale / fondo.obiettivo) * 100 %>%"></div>
-            </div>
-            Incidenza sul saldo (<%= Math.round((fondo.attuale / data.saldo) * 100) %>%)
-            <div class="progress">
-              <div class="determinate orange" style="width: <%= (fondo.attuale / data.saldo) * 100 %>%"></div>
+            <span class="card-title"><%= conto.titolo %></span>
+            <div class="card-action">
+              <a href="<%= conto.key %>/situazione-attuale">Vai al conto</a>
             </div>
           </div>
         </div>
@@ -140,37 +34,6 @@
     <% }) %>
   </div>
 
-  <div class="divider"></div>
-  <div class="row">
-    <div class="col">
-      <h4>Buste</h4>
-    </div> 
-  </div>
-  <div class="row">
-    <% data.buste.forEach((busta, idx) => { %>
-      <div class="col">
-        <div class="card teal darken-1">
-          <div class="card-content white-text">
-            <span class="card-title"><%= busta.titolo %></span>
-            <div> <%= busta.attuale %>  € </div>
-            Incidenza sul saldo (<%= Math.round((busta.attuale / data.saldo).toFixed(2) * 100) %>%)
-            <div class="progress">
-              <div class="determinate orange" style="width: <%= (busta.attuale / data.saldo) * 100 %>%"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    <% }) %>
-  </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      M.Datepicker.init(document.querySelectorAll('.datepicker'), {"autoClose": true, "format": "dd-mm-yyyy"});
-    });
-
-  </script>
-<script src="/script.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 </body>
 </html>

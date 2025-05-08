@@ -1,5 +1,7 @@
 .env
 node_modules/
 package-lock.json
+DB2
+DB2/*
 DB
 DB/*
