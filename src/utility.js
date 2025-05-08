@@ -33,26 +33,12 @@ function leggiMovimenti() {
   });
 }
 
-function leggiSaldo() {
-  const filePath = path.join(rootPath, process.env.SALDO_PATH);
-  return new Promise((resolve, reject) => {
-    const records = [];
-    fs.createReadStream(filePath)
-      .pipe(csv())
-      .on('data', (row) => {
-        const data = row.data?.trim();
-        const importo = parseFloat(row.importo);
-        if (data && !isNaN(importo)) {
-          records.push({ data, importo });
-        }
-      })
-      .on('end', () => {
-        if (records.length === 0) return resolve(0);
-        records.sort((a, b) => new Date(b.data) - new Date(a.data));
-        resolve(records[0].importo);
-      })
-      .on('error', reject);
-  });
+async function leggiSaldo() {
+  const movimenti = await Promise.resolve(leggiMovimenti());
+  return movimenti.reduce(
+    (accumulator, currentValue) => accumulator + currentValue.importo,
+    0,
+  );
 }
 
 async function calcolaSituazione() {
