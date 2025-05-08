@@ -113,6 +113,14 @@ document.getElementById('btn-salva-smistamento')?.addEventListener('click', asyn
     }
   });
 
+  const disponibile = document.getElementById('non-accantonato');
+  righe.push({
+    data,
+    importo: parseFloat(disponibile.value),
+    categoria: null,
+    descrizione: `Residuo dopo accantonamento da ${descrizioneBase}`
+  });
+
   if (righe.length === 0) {
     alert('Nessun importo accantonato');
     return;
@@ -177,7 +185,7 @@ function generaDialogSmistamento(importoTotale) {
     col.className = "col";
     col.innerHTML = `
       <p style="color: ${colore}">${label}</p>
-      <input type="number" value="${valoreDefault}" step="0.01" class="input-smistamento text-right border px-1 rounded" data-nome="${cat.nome}" />
+      <input type="number" value="${valoreDefault}" step="1" class="input-smistamento text-right border px-1 rounded" data-nome="${cat.nome}" />
     `;
     fondoContainer.appendChild(col);
   });
@@ -202,7 +210,7 @@ function generaDialogSmistamento(importoTotale) {
     col.className = "col";
     col.innerHTML = `
       <p>${label}</p>
-      <input type="number" value="${valoreDefault}" step="0.01" class="input-smistamento text-right border px-1 rounded" data-nome="${cat.nome}" />
+      <input type="number" value="${valoreDefault}" step="1" class="input-smistamento text-right border px-1 rounded" data-nome="${cat.nome}" />
     `;
     bustaContainer.appendChild(col);
   });
@@ -223,8 +231,8 @@ function aggiornaNonAccantonato(importoTotale) {
     if (!isNaN(val)) totaleAccantonato += val;
   });
 
-  const resto = (importoTotale - totaleAccantonato).toFixed(2);
-  nonAccantonatoOutput.textContent = `${resto} €`;
+  const resto = importoTotale - totaleAccantonato;
+  nonAccantonatoOutput.value = resto;
 }
 
 function creaRigaSpesa(defaultCategoria = 'altro') {

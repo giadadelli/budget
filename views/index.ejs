@@ -99,7 +99,11 @@
       <!-- righe generate via JS -->
     </div>
     <div class="row">
-      <h6>Disponibile (non accantonato): <span id="non-accantonato">0.00 €</span></h6>
+      <div class="col">
+        <p>Disponibile (non accantonato)</p>
+        <input id="non-accantonato" type="number" step="1" class="text-right border px-1 rounded"  />
+      </div>
+      
     </div>
     <div style="display: flex; justify-content: space-between;">
       <a id="btn-chiudi-smistamento" class="waves-effect waves-light btn">Annulla</a>
