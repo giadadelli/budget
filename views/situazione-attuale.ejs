@@ -114,9 +114,34 @@
   </dialog>
   
   <div class="divider"></div>
+    <div class="row">
+      <div class="col">
+        <h4>Buste</h4>
+      </div> 
+    </div>
+    <div class="row">
+      <% data.buste.forEach((busta, idx) => { %>
+        <div class="col">
+          <div class="card teal darken-1">
+            <div class="card-content white-text">
+              <span class="card-title"><%= busta.titolo %></span>
+              <div> <%= busta.attuale %>  € </div>
+              Incidenza sul saldo (<%= Math.round((busta.attuale / data.saldo).toFixed(2) * 100) %>%)
+              <div class="progress">
+                <div class="determinate orange" style="width: <%= (busta.attuale / data.saldo) * 100 %>%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      <% }) %>
+    </div>
+
+
+  <div class="divider"></div>
   <div class="row">
     <div class="col">
-      <h4>Fondi</h4>
+      <h4>I miei risparmi</h4>
     </div> 
   </div>
   <div class="row">
@@ -140,31 +165,6 @@
 
     <% }) %>
   </div>
-
-  <div class="divider"></div>
-  <div class="row">
-    <div class="col">
-      <h4>Buste</h4>
-    </div> 
-  </div>
-  <div class="row">
-    <% data.buste.forEach((busta, idx) => { %>
-      <div class="col">
-        <div class="card teal darken-1">
-          <div class="card-content white-text">
-            <span class="card-title"><%= busta.titolo %></span>
-            <div> <%= busta.attuale %>  € </div>
-            Incidenza sul saldo (<%= Math.round((busta.attuale / data.saldo).toFixed(2) * 100) %>%)
-            <div class="progress">
-              <div class="determinate orange" style="width: <%= (busta.attuale / data.saldo) * 100 %>%"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    <% }) %>
-  </div>
-
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       M.Datepicker.init(document.querySelectorAll('.datepicker'), {"autoClose": true, "format": "dd-mm-yyyy"});
