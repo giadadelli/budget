@@ -265,7 +265,7 @@ function creaRigaSpesa(defaultCategoria = 'altro') {
       <label>Categoria</label>
     </div>
 
-    <div class="col input-field" style="visibility: hidden; position: absolute;" data-sottocategoria="${id}">
+    <div class="col input-field" data-sottocategoria="${id}">
       <select name="sottocategoria" ></select>
     </div>
 
@@ -284,7 +284,7 @@ function creaRigaSpesa(defaultCategoria = 'altro') {
 
   speseContainer.appendChild(wrapper);
 
-  M.FormSelect.init(document.querySelectorAll('select'), {});
+  
   M.Datepicker.init(document.querySelectorAll('.datepicker'), {"autoClose": true, "format": "dd-mm-yyyy"});
 
   const categoriaSelect = wrapper.querySelector(`select[name="categoria"]`);
@@ -307,4 +307,5 @@ function creaRigaSpesa(defaultCategoria = 'altro') {
 
   categoriaSelect.addEventListener('change', aggiornaSottocategoria);
   aggiornaSottocategoria(); // iniziale
+  M.FormSelect.init(document.querySelectorAll('select'), {});
 }
