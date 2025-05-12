@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { movimentiService } from './services/movimentiService.js';
+import { risparmiService } from './services/risparmiService.js';
 
 dotenv.config();
 
@@ -15,8 +16,9 @@ async function calcolaSituazione(conto) {
       movimentiService.getMovimenti(conto)
     ]);
   
-   
-    const avanzo = 0;// TODO saldo - totaleFondi - totaleBuste;
+    const risparmi = await Promise.resolve(risparmiService.getRisparmiTotale(conto));
+     
+    const avanzo = saldo - risparmi;
   
     return {
       saldo,

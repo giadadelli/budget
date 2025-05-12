@@ -12,6 +12,15 @@ function getSalvadanai(conto) {
     return [];
 }
 
+async function getRisparmiTotale(conto) {
+    const salvadanai = await Promise.resolve(this.getSalvadanai(conto));
+    return salvadanai.reduce(
+        (accumulator, currentValue) => accumulator + currentValue.importo,
+        0,
+    );
+}
+
 export const risparmiService = {
-    getSalvadanai
+    getSalvadanai,
+    getRisparmiTotale
 };
