@@ -6,10 +6,13 @@ import { accantonamentiService } from './services/accantonamentiService.js';
 dotenv.config();
 
 async function calcolaSituazione(conto) {
-  const [accantonamenti, movimenti, saldo] = await Promise.all([
+  const saldo = await Promise.resolve(movimentiService.getSaldo(conto));
+  if (saldo == 0) {
+    
+  }
+  const [accantonamenti, movimenti] = await Promise.all([
     accantonamentiService.getAccantonamenti(conto),
-    movimentiService.getMovimenti(conto),
-    movimentiService.getSaldo(conto)
+    movimentiService.getMovimenti(conto)
   ]);
 
   const fondi = [];

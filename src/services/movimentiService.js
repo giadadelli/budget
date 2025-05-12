@@ -1,9 +1,17 @@
 import fs from 'fs';
 import csv from 'csv-parser';
 import { contiService } from './contiService.js';
+import { existsSync } from 'node:fs';
 
 function getMovimenti(conto) {
   const fileMovimenti = contiService.getMovimentiFilePath(conto);
+
+  if (!existsSync(fileMovimenti)) {
+    const content = 'data,importo,categoria,sottocategoria,descrizione,inserito';
+    fs.writeFileSync(fileMovimenti, content);
+    console.log("File movimenti.csv created");
+  }
+  
 
   return new Promise((resolve, reject) => {
     const results = [];
