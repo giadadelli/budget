@@ -2,30 +2,51 @@ import fs from 'fs';
 import { existsSync } from 'node:fs';
 import csv from 'csvtojson'
 
-import { contiService } from './contiService.js';
-import { movimentiService } from './movimentiService.js';
+import { fileUtility } from './util/fileUtils.js'
+
+function getRisparmiFile(key) {
+  const fileRisparmi = fileUtility.getFilePath(key, 'risparmi.csv');
+  console.log("getRisparmiFile -> " + fileRisparmi);
+
+  if (!existsSync(fileRisparmi)) {
+    const content = 'titolo,obiettivo,importo-ricorrente,frequenza,inserito';
+    fs.writeFileSync(fileRisparmi, content);
+    console.log("File risparmi.csv created");
+  }
+
+  return fileRisparmi;
+}
+
+function getAccantonamentiFile(key) {
+  const fileAccantonamenti = fileUtility.getFilePath(key, 'accantonamenti.csv');
+  console.log("getAccantonamentiFile -> " + fileAccantonamenti);
+
+  if (!existsSync(fileAccantonamenti)) {
+    const content = 'data,importo,categoria,sottocategoria,descrizione,inserito';
+    fs.writeFileSync(fileAccantonamenti, content);
+    console.log("File accantonamenti.csv created");
+  }
+
+  return fileAccantonamenti;
+}
 
 async function getSalvadanai(conto) {
-    const fileRisparmi = contiService.getRisparmiFilePath(conto);
-    if (!existsSync(fileRisparmi)) {
-      const content = 'titolo,obiettivo,importo-ricorrente,frequenza,inserito';
-      fs.writeFileSync(fileRisparmi, content);
-      console.log("File risparmi.csv created");
+    const fileRisparmi = risparmiService.getRisparmiFile(conto);
+    const result = await Promise.resolve(fileUtility.readCsvAsJson(fileRisparmi));
+    for (const element of result) {
+      const saldo = await Promise.resolve(risparmiService.getRisparmiTotalePerSalvadanaio(conto, element.titolo));
+      element.saldo = saldo;
+      element.obiettivo = parseFloat(element.obiettivo);
+      
     }
-
-    const jsonArray=await csv().fromFile(fileRisparmi);
-    return jsonArray;
+    //result.forEach((element) => element.saldo = risparmiService.getRisparmiTotalePerSalvadanaio(conto, element.titolo));
+    console.log("##", result)
+    
+    return result;
 }
 
 async function getSalvadanaiCsv(conto) {
-  const fileRisparmi = contiService.getRisparmiFilePath(conto);
-  
-    if (!existsSync(fileRisparmi)) {
-      const content = 'titolo,obiettivo,importo-ricorrente,frequenza,inserito';
-      fs.writeFileSync(fileRisparmi, content);
-      console.log("File risparmi.csv created");
-    }
-    
+  const fileRisparmi = risparmiService.getRisparmiFile(conto);
   
     return new Promise((resolve, reject) => {
       const results = [];
@@ -43,14 +64,26 @@ async function getSalvadanaiCsv(conto) {
   
 }
 
-async function getRisparmiTotale(conto) {
- //const salvadanai = this.getSalvadanaiCsv(conto);
-  const salvadanai = await Promise.resolve(this.getSalvadanaiCsv(conto));
-    return salvadanai.reduce(
-        (accumulator, currentValue) => accumulator + currentValue.importo,
-        0,
-    );
+function getMovimenti(conto) {
+  return fileUtility.readCsv(risparmiService.getAccantonamentiFile(conto));
 }
+
+async function getRisparmiTotale(conto) {
+  const movimenti = await Promise.resolve(risparmiService.getMovimenti(conto));
+  return movimenti.reduce(
+    (accumulator, currentValue) => accumulator + currentValue.importo,
+    0,
+  );
+}
+
+async function getRisparmiTotalePerSalvadanaio(conto, salvadanaio) {
+  const movimenti = await Promise.resolve(risparmiService.getMovimenti(conto));
+  return movimenti.filter((m) => m.categoria == salvadanaio).reduce(
+    (accumulator, currentValue) => accumulator + currentValue.importo,
+    0,
+  );
+}
+
 
 async function addSalvadanaio(conto, {titolo, obiettivo, iniziale}) {
     if (!titolo) {
@@ -60,15 +93,15 @@ async function addSalvadanaio(conto, {titolo, obiettivo, iniziale}) {
     const oggi = new Date().toISOString().slice(0, 10);
     const riga = `\n${titolo},${obiettivo},null,null,${oggi}`;
     
-    const fileRisparmi = contiService.getRisparmiFilePath(conto);
+    const fileRisparmi = risparmiService.getRisparmiFile(conto);
     fs.appendFileSync(fileRisparmi, riga, 'utf8');
 
     if (iniziale && iniziale > 0) {
       //(conto, {data, importo, categoria, sottocategoria, descrizione })
-      movimentiService.addMovimento(conto, {
+      risparmiService.addMovimento(conto, {
         data: oggi,
-        importo: -iniziale,
-        categoria: null,
+        importo: iniziale,
+        categoria: titolo,
         sottocategoria: null,
         descrizione: "Creazione salvadanaio " + titolo
       });
@@ -76,9 +109,29 @@ async function addSalvadanaio(conto, {titolo, obiettivo, iniziale}) {
     }
 }
 
+async function addMovimento(conto, {data, importo, categoria, sottocategoria, descrizione }) {
+  if (!conto || !data || !importo || !categoria) {
+    throw new Error('Dati non validi');
+  }
+
+  const oggi = new Date().toISOString().slice(0, 10);
+  
+  // 1. Scrivi i movimenti
+  const riga = `\n${data},${importo},"${categoria}",${sottocategoria},"${descrizione}",${oggi}`;
+  
+  const fileMovimenti = risparmiService.getAccantonamentiFile(conto);
+  fs.appendFileSync(fileMovimenti, riga, 'utf8');
+
+}
+
 export const risparmiService = {
     getSalvadanai,
     getRisparmiTotale,
     addSalvadanaio,
-    getSalvadanaiCsv
+    getSalvadanaiCsv,
+    getRisparmiFile,
+    getAccantonamentiFile,
+    getMovimenti,
+    addMovimento,
+    getRisparmiTotalePerSalvadanaio
 };

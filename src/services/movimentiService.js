@@ -1,31 +1,21 @@
 import fs from 'fs';
-import csv from 'csv-parser';
-import { contiService } from './contiService.js';
 import { existsSync } from 'node:fs';
 
-function getMovimenti(conto) {
-  const fileMovimenti = contiService.getMovimentiFilePath(conto);
+import {fileUtility} from './util/fileUtils.js'
 
+function getMovimentiFile(key) {
+  const fileMovimenti = fileUtility.getFilePath(key, 'movimenti.csv');
+  console.log("getMovimentiFile -> " + fileMovimenti);
   if (!existsSync(fileMovimenti)) {
     const content = 'data,importo,categoria,sottocategoria,descrizione,inserito';
     fs.writeFileSync(fileMovimenti, content);
     console.log("File movimenti.csv created");
   }
-  
+  return fileMovimenti;
+}
 
-  return new Promise((resolve, reject) => {
-    const results = [];
-    fs.createReadStream(fileMovimenti)
-      .pipe(csv())
-      .on('data', (data) => {
-        const importo = parseFloat(data.importo);
-        if (!isNaN(importo)) {
-          results.push({ ...data, importo });
-        }
-      })
-      .on('end', () => resolve(results))
-      .on('error', reject);
-  });
+function getMovimenti(conto) {
+  return fileUtility.readCsv(movimentiService.getMovimentiFile(conto));
 }
 
 async function getSaldo(conto) {
@@ -49,7 +39,7 @@ async function addSpese(conto, spese) {
     return `\n${sp.data},-${sp.importo},${sp.categoria},${sottocategoria},"${descrizione}",${oggi}`;
   }).join('');
   
-  const fileMovimenti = contiService.getMovimentiFilePath(conto);
+  const fileMovimenti = movimentiService.getMovimentiFile(conto);
   fs.appendFileSync(fileMovimenti, righe, 'utf8');
 }
 
@@ -63,7 +53,7 @@ async function addMovimento(conto, {data, importo, categoria, sottocategoria, de
   // 1. Scrivi i movimenti
   const riga = `\n${data},${importo},${categoria},${sottocategoria},"${descrizione}",${oggi}`;
   
-  const fileMovimenti = contiService.getMovimentiFilePath(conto);
+  const fileMovimenti = movimentiService.getMovimentiFile(conto);
   fs.appendFileSync(fileMovimenti, riga, 'utf8');
 
 }
@@ -81,7 +71,7 @@ async function addEntrate(conto, {movimenti, incremento, data }) {
     return `\n${m.data},${m.importo},${m.categoria},null,"${descrizione}",${oggi}`;
   }).join('');
   
-  const fileMovimenti = contiService.getMovimentiFilePath(conto);
+  const fileMovimenti = movimentiService.getMovimentiFile(conto);
   fs.appendFileSync(fileMovimenti, righe, 'utf8');
 
 }
@@ -91,5 +81,6 @@ export const movimentiService = {
     addEntrate,
     getMovimenti,
     addMovimento,
-    getSaldo
+    getSaldo,
+    getMovimentiFile
 };

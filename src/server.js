@@ -42,7 +42,9 @@ app.get('/:conto/situazione-attuale', async (req, res) => {
     if (data.saldo === 0) {
       res.render('saldo-zero', { conto });
     } else {
-      const salvadanai = await risparmiService.getSalvadanai(conto);
+      const salvadanai = await Promise.resolve(risparmiService.getSalvadanai(conto));
+      console.log("Salvadanai: ", salvadanai);
+
       res.render('situazione-attuale', { data, conto, salvadanai });
     }
 
