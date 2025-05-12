@@ -24,33 +24,54 @@
   <div class="divider"></div>
    
     <div class="row">
-      
+      ## <%= salvadanai %> ##
       <% if (salvadanai.length == 0) { %>
         <h4>Non hai ancora iniziato a risparmiare</h4>
-        TODO aggiungere bottone per creare salvadanaio
-      <% } %>
-      <% if (salvadanai.length != 0) { %>
         <div class="row">
           <div class="col">
-            <h4>I miei risparmi</h4>
-          </div> 
+            <a id="btn-apri-dialog-salvadanaio" class="waves-effect waves-light btn">Crea salvadanaio</a>
+          </div>
         </div>
-        <% salvadanai.forEach((salvadanaio, idx) => { %>
-          <div class="col">
-            <div class="card teal darken-1">
-              <div class="card-content white-text">
-                <span class="card-title"><%= busta.titolo %></span>
-                <div> <%= busta.attuale %>  € </div>
-                Incidenza sul saldo (<%= Math.round((busta.attuale / data.saldo).toFixed(2) * 100) %>%)
-                <div class="progress">
-                  <div class="determinate orange" style="width: <%= (busta.attuale / data.saldo) * 100 %>%"></div>
+        
+        
+        <dialog id="dialog-crea-salvadanaio" class="rounded-xl p-4 border shadow-lg">
+          <form id="form-salvadanaio" method="dialog" class="flex flex-col gap-4">
+            <div class="flex flex-col gap-4", style="margin: 10px">
+              titolo,obiettivo,importo-ricorrente,frequenza,inserito
+              <div class="row">
+                <div class="input-field col s4">
+                  <input id="titolo" type="text" class="validate">
+                  <label>Nome</label>
                 </div>
               </div>
+              <div class="row">
+                <div class="input-field col s4">
+                  <input id="obiettivo" type="number" class="validate">
+                  <label >Obiettivo</label>
+                </div>
+                <div class="input-field col s4">
+                  <input id="iniziale" type="number" class="validate">
+                  <label >Importo iniziale</label>
+                </div>
+                TODO aggiungere import per trasferimento ricorrente
+              </div>
             </div>
-          </div>
-  
-        <% }) %>
+          
+          
+            <div class="flex gap-2 justify-end" style="display: flex; justify-content: space-between;">
+              <a id="btn-chiudi-dialog-salvadanaio" class="waves-effect waves-light btn">Annulla</a>
+              
+              <button class="btn waves-effect waves-light" type="submit" name="action">Salva
+                <i class="material-icons right">save</i>
+              </button>
+            </div>
+          </form>
+          
+        </dialog>
+
+
       <% } %>
+      
     </div>
 
 <script src="/situazione-attuale.js"></script>

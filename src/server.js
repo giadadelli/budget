@@ -65,10 +65,21 @@ app.post('/:conto/aggiungi-spesa', async (req, res) => {
   }
 });
 
-app.post('/:conto/movimento', async (req, res) => {
+app.post('/:conto/movimenti', async (req, res) => {
   try {
     const conto = req.params.conto;
     await movimentiService.addMovimento(conto, req.body);
+    res.status(200).send('OK');
+  } catch (err) {
+    console.error('❌ Errore accantonamento:', err.message);
+    res.status(500).send('Errore durante il salvataggio');
+  }
+});
+
+app.post('/:conto/salvadanai', async (req, res) => {
+  try {
+    const conto = req.params.conto;
+    await risparmiService.addSalvadanaio(conto, req.body);
     res.status(200).send('OK');
   } catch (err) {
     console.error('❌ Errore accantonamento:', err.message);

@@ -2,17 +2,9 @@ document.getElementById('saldo-iniziale').addEventListener('submit', async (e) =
     e.preventDefault();
     //data,importo,categoria,sottocategoria,descrizione,inserito
     const today = new Date().toISOString().slice(0, 10);
-    const movimento = {
-        "data": today,
-        "importo": document.getElementById('saldo').value,
-        "categoria": null,
-        "sottocategoria": null,
-        "descrizione": "Saldo iniziale"
-    };
-    
-
+   
     try {
-      const res = await fetch('/' + window.__CONTO__ + '/movimento', {
+      const res = await fetch('/' + window.__CONTO__ + '/movimenti', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
