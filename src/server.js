@@ -5,9 +5,8 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import { renderUtility } from './renderUtility.js';
 import { movimentiService } from './services/movimentiService.js';
-import { accantonamentiService } from './services/accantonamentiService.js';
-import { sottocategorieService } from './services/sottocategorieService.js';
 import { contiService } from './services/contiService.js';
+import { risparmiService } from './services/risparmiService.js';
 
 dotenv.config();
 
@@ -43,9 +42,8 @@ app.get('/:conto/situazione-attuale', async (req, res) => {
     if (data.saldo === 0) {
       res.render('saldo-zero', { conto });
     } else {
-      const accantonamenti = await accantonamentiService.getAccantonamenti(conto);
-      const sottocategorie = await sottocategorieService.getSottocategorie(conto);
-      res.render('situazione-attuale', { data, accantonamenti, sottocategorie, conto });
+      const salvadanai = await risparmiService.getSalvadanai(conto);
+      res.render('situazione-attuale', { data, conto, salvadanai });
     }
 
   } catch (error) {

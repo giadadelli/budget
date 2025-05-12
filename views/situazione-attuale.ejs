@@ -9,15 +9,6 @@
 </head>
 
 <script>
-  window.__DATA__ = {
-    fondi: <%- JSON.stringify(data.fondi) %>,
-    buste: <%- JSON.stringify(data.buste) %>,
-    attuali: Object.fromEntries(
-      [...<%- JSON.stringify(data.fondi) %>, ...<%- JSON.stringify(data.buste) %>].map(x => [x.nome, x.attuale])
-    )
-  };
-  window.__ACC__ = <%- JSON.stringify(accantonamenti) %>;
-  window.__SOTTOCATEGORIE__ = <%- JSON.stringify(sottocategorie.sottocategorie) %>;
   window.__CONTO__ = <%- JSON.stringify(conto) %>;
 </script>
 
@@ -113,57 +104,37 @@
   </dialog>
   
   <div class="divider"></div>
+   
     <div class="row">
-      <div class="col">
-        <h4>Buste</h4>
-      </div> 
-    </div>
-    <div class="row">
-      <% data.buste.forEach((busta, idx) => { %>
-        <div class="col">
-          <div class="card teal darken-1">
-            <div class="card-content white-text">
-              <span class="card-title"><%= busta.titolo %></span>
-              <div> <%= busta.attuale %>  € </div>
-              Incidenza sul saldo (<%= Math.round((busta.attuale / data.saldo).toFixed(2) * 100) %>%)
-              <div class="progress">
-                <div class="determinate orange" style="width: <%= (busta.attuale / data.saldo) * 100 %>%"></div>
+      
+      <% if (salvadanai.length == 0) { %>
+        <h4>Non hai ancora iniziato a risparmiare</h4>
+        TODO aggiungere bottone per creare salvadanaio
+      <% } %>
+      <% if (salvadanai.length != 0) { %>
+        <div class="row">
+          <div class="col">
+            <h4>I miei risparmi</h4>
+          </div> 
+        </div>
+        <% salvadanai.forEach((salvadanaio, idx) => { %>
+          <div class="col">
+            <div class="card teal darken-1">
+              <div class="card-content white-text">
+                <span class="card-title"><%= busta.titolo %></span>
+                <div> <%= busta.attuale %>  € </div>
+                Incidenza sul saldo (<%= Math.round((busta.attuale / data.saldo).toFixed(2) * 100) %>%)
+                <div class="progress">
+                  <div class="determinate orange" style="width: <%= (busta.attuale / data.saldo) * 100 %>%"></div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-
-      <% }) %>
+  
+        <% }) %>
+      <% } %>
     </div>
 
-
-  <div class="divider"></div>
-  <div class="row">
-    <div class="col">
-      <h4>I miei risparmi</h4>
-    </div> 
-  </div>
-  <div class="row">
-    
-    <% data.fondi.forEach((fondo, idx) => { %>
-      <div class="col">
-        <div class="card blue-grey darken-1">
-          <div class="card-content white-text">
-            <span class="card-title"><%= fondo.titolo %></span>
-            <%= fondo.attuale %> € / <%= fondo.obiettivo %> €
-            <div class="progress">
-              <div class="determinate" style="width: <%= (fondo.attuale / fondo.obiettivo) * 100 %>%"></div>
-            </div>
-            Incidenza sul saldo (<%= Math.round((fondo.attuale / data.saldo) * 100) %>%)
-            <div class="progress">
-              <div class="determinate orange" style="width: <%= (fondo.attuale / data.saldo) * 100 %>%"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    <% }) %>
-  </div>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       M.Datepicker.init(document.querySelectorAll('.datepicker'), {"autoClose": true, "format": "dd-mm-yyyy"});

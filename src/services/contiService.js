@@ -16,15 +16,9 @@ function getConti() {
     return result;
 }
 
-function getAccantonamentiFilePath(key) {
-    const result = getFilePath(key, 'accantonamenti.json');
-    console.log("getAccantonamentiFilePath -> " + result)
-    return result;
-}
-
-function getSottocategorieFilePath(key) {
-    const result = getFilePath(key, 'sottocategorie.json');
-    console.log("getSottocategorieFilePath -> " + result)
+function getRisparmiFilePath(key) {
+    const result = getFilePath(key, 'risparmi.csv');
+    console.log("getRisparmiFilePath -> " + result)
     return result;
 }
 
@@ -48,7 +42,6 @@ function getFilePath(key, fileName) {
 
 export const contiService = {
     getConti,
-    getAccantonamentiFilePath,
-    getSottocategorieFilePath,
-    getMovimentiFilePath
+    getMovimentiFilePath,
+    getRisparmiFilePath
 };
