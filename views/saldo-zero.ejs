@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title>I tuoi conti</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<script>
+  window.__CONTO__ = <%- JSON.stringify(conto) %>;
+</script>
+
+<body class="container">
+  <div class="row">
+    <h4>Inserisci il tuo saldo per iniziare</h4>
+    <form id="saldo-iniziale" method="post">
+      <div class="row">
+        <div class="input-field col s4">
+          <input id="saldo" type="number" class="validate">
+          <label for="first_name">Saldo attuale</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col">
+          <button class="btn waves-effect waves-light" type="submit" name="action">Salva
+            <i class="material-icons right">send</i>
+          </button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+  <script src="/saldo-zero.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>

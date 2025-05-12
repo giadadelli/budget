@@ -53,6 +53,21 @@ async function addSpese(conto, spese) {
   fs.appendFileSync(fileMovimenti, righe, 'utf8');
 }
 
+async function addMovimento(conto, {data, importo, categoria, sottocategoria, descrizione }) {
+  if (!conto || !data || !importo) {
+    throw new Error('Dati non validi');
+  }
+
+  const oggi = new Date().toISOString().slice(0, 10);
+  
+  // 1. Scrivi i movimenti
+  const riga = `\n${data},${importo},${categoria},${sottocategoria},"${descrizione}",${oggi}`;
+  
+  const fileMovimenti = contiService.getMovimentiFilePath(conto);
+  fs.appendFileSync(fileMovimenti, riga, 'utf8');
+
+}
+
 async function addEntrate(conto, {movimenti, incremento, data }) {
   if (!Array.isArray(movimenti) || movimenti.length === 0 || isNaN(incremento) || !data) {
     throw new Error('Dati non validi');
@@ -75,5 +90,6 @@ export const movimentiService = {
     addSpese,
     addEntrate,
     getMovimenti,
+    addMovimento,
     getSaldo
 };

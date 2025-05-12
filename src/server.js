@@ -40,10 +40,14 @@ app.get('/:conto/situazione-attuale', async (req, res) => {
   try {
     const conto = req.params.conto;
     const data = await renderUtility.calcolaSituazione(conto);
-    const accantonamenti = await accantonamentiService.getAccantonamenti(conto);
-    const sottocategorie = await sottocategorieService.getSottocategorie(conto);
+    if (data.saldo === 0) {
+      res.render('saldo-zero', { conto });
+    } else {
+      const accantonamenti = await accantonamentiService.getAccantonamenti(conto);
+      const sottocategorie = await sottocategorieService.getSottocategorie(conto);
+      res.render('situazione-attuale', { data, accantonamenti, sottocategorie, conto });
+    }
 
-    res.render('situazione-attuale', { data, accantonamenti, sottocategorie, conto });
   } catch (error) {
     console.error('❌ Errore nel calcolo della situazione:', error);
     if (!res.headersSent) {
@@ -63,6 +67,16 @@ app.post('/:conto/aggiungi-spesa', async (req, res) => {
   }
 });
 
+app.post('/:conto/movimento', async (req, res) => {
+  try {
+    const conto = req.params.conto;
+    await movimentiService.addMovimento(conto, req.body);
+    res.status(200).send('OK');
+  } catch (err) {
+    console.error('❌ Errore accantonamento:', err.message);
+    res.status(500).send('Errore durante il salvataggio');
+  }
+});
 
 app.post('/:conto/aggiungi-accantonamenti', async (req, res) => {
   try {
