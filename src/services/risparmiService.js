@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { existsSync } from 'node:fs';
 import csv from 'csvtojson'
+import crypto from 'crypto'
 
 import { fileUtility } from './util/fileUtils.js'
 
@@ -9,7 +10,7 @@ function getRisparmiFile(key) {
   console.log("getRisparmiFile -> " + fileRisparmi);
 
   if (!existsSync(fileRisparmi)) {
-    const content = 'titolo,obiettivo,importo_ricorrente,frequenza,inserito';
+    const content = 'id,titolo,obiettivo,importo_ricorrente,frequenza,inserito';
     fs.writeFileSync(fileRisparmi, content);
     console.log("File risparmi.csv created");
   }
@@ -92,7 +93,6 @@ async function getRisparmiTotalePerSalvadanaio(conto, salvadanaio) {
   );
 }
 
-
 async function addSalvadanaio(conto, {titolo, obiettivo, iniziale, importo_ricorrente}) {
     if (!titolo) {
       throw new Error('Nessuna spesa da salvare');
@@ -100,14 +100,16 @@ async function addSalvadanaio(conto, {titolo, obiettivo, iniziale, importo_ricor
   
     obiettivo = obiettivo > 0 ? obiettivo : null;
     const oggi = new Date().toISOString().slice(0, 10);
-    //'titolo,obiettivo,importo_ricorrente,frequenza,inserito'
+    //'id,titolo,obiettivo,importo_ricorrente,frequenza,inserito'
     let frequenza = 'manuale';
     if (importo_ricorrente != null && importo_ricorrente > 0) {
       frequenza = 'stipendio';
     } else {
       importo_ricorrente = null;
     }
-    const riga = `\n${titolo},${obiettivo},${importo_ricorrente},${frequenza},${oggi}`;
+
+    let uuid = crypto.randomUUID();
+    const riga = `\n${uuid},${titolo},${obiettivo},${importo_ricorrente},${frequenza},${oggi}`;
     
     const fileRisparmi = risparmiService.getRisparmiFile(conto);
     fs.appendFileSync(fileRisparmi, riga, 'utf8');
