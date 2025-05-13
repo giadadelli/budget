@@ -36,11 +36,9 @@ async function getSalvadanai(conto) {
     for (const element of result) {
       const saldo = await Promise.resolve(risparmiService.getRisparmiTotalePerSalvadanaio(conto, element.titolo));
       element.saldo = saldo;
-      element.obiettivo = parseFloat(element.obiettivo);
+      element.obiettivo = element.obiettivo != "null" ? parseFloat(element.obiettivo) : null;
       
     }
-    //result.forEach((element) => element.saldo = risparmiService.getRisparmiTotalePerSalvadanaio(conto, element.titolo));
-    console.log("##", result)
     
     return result;
 }
@@ -90,6 +88,7 @@ async function addSalvadanaio(conto, {titolo, obiettivo, iniziale}) {
       throw new Error('Nessuna spesa da salvare');
     }
   
+    obiettivo = obiettivo > 0 ? obiettivo : null;
     const oggi = new Date().toISOString().slice(0, 10);
     const riga = `\n${titolo},${obiettivo},null,null,${oggi}`;
     
