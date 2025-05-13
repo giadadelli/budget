@@ -3,8 +3,8 @@ node_modules/
 package-lock.json
 DB2
 DB2/*
-DB
-DB/*
+DB*
+DB*/*
 DB_TEST
 DB_TEST/*
 .idea/
