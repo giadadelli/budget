@@ -7,7 +7,6 @@ document.getElementById('btn-chiudi-dialog-salvadanaio')?.addEventListener('clic
 
 document.getElementById('form-salvadanaio').addEventListener('submit', async (e) => {
     e.preventDefault();
-    //FORM: titolo,obiettivo,iniziale
 
     try {
       const res = await fetch('/' + window.__CONTO__ + '/salvadanai', {
@@ -16,7 +15,8 @@ document.getElementById('form-salvadanaio').addEventListener('submit', async (e)
         body: JSON.stringify({
             "titolo": document.getElementById('titolo').value,
             "obiettivo": document.getElementById('obiettivo').value,
-            "iniziale": document.getElementById('iniziale').value
+            "iniziale": document.getElementById('iniziale').value,
+            "importo_ricorrente": document.getElementById('importo_ricorrente').value
         })
       });
   

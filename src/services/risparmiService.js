@@ -84,14 +84,21 @@ async function getRisparmiTotalePerSalvadanaio(conto, salvadanaio) {
 }
 
 
-async function addSalvadanaio(conto, {titolo, obiettivo, iniziale}) {
+async function addSalvadanaio(conto, {titolo, obiettivo, iniziale, importo_ricorrente}) {
     if (!titolo) {
       throw new Error('Nessuna spesa da salvare');
     }
   
     obiettivo = obiettivo > 0 ? obiettivo : null;
     const oggi = new Date().toISOString().slice(0, 10);
-    const riga = `\n${titolo},${obiettivo},null,null,${oggi}`;
+    //'titolo,obiettivo,importo_ricorrente,frequenza,inserito'
+    let frequenza = 'manuale';
+    if (importo_ricorrente != null && importo_ricorrente > 0) {
+      frequenza = 'stipendio';
+    } else {
+      importo_ricorrente = null;
+    }
+    const riga = `\n${titolo},${obiettivo},${importo_ricorrente},${frequenza},${oggi}`;
     
     const fileRisparmi = risparmiService.getRisparmiFile(conto);
     fs.appendFileSync(fileRisparmi, riga, 'utf8');

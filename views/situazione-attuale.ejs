@@ -33,25 +33,35 @@
   </div>
     
     
-  <dialog id="dialog-crea-salvadanaio" class="rounded-xl p-4 border shadow-lg">
+  <dialog id="dialog-crea-salvadanaio" class="rounded-xl p-4 border shadow-lg" style="width: 600px;">
     <form id="form-salvadanaio" method="dialog" class="flex flex-col gap-4">
       <div class="flex flex-col gap-4", style="margin: 10px">
         <div class="row">
-          <div class="input-field col s4">
+          <div class="input-field col s12">
             <input id="titolo" type="text" class="validate">
             <label>Nome</label>
           </div>
         </div>
+        <div class="divider"></div>
         <div class="row">
-          <div class="input-field col s4">
-            <input id="obiettivo" type="number" class="validate">
+          <div class="input-field col s12">
+            <input id="iniziale" type="number" step="0.01" class="validate">
+            <label>Importo iniziale</label>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="obiettivo" type="number" step="0.01" class="validate">
             <label >Obiettivo</label>
           </div>
-          <div class="input-field col s4">
-            <input id="iniziale" type="number" step="0.01" class="validate">
-            <label >Importo iniziale</label>
+        </div>
+        <div class="divider"></div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="importo_ricorrente" type="number" step="0.01" class="validate">
+            <label>Accantonamento ad ogni stipendio</label>
           </div>
-          TODO aggiungere import per trasferimento ricorrente
         </div>
       </div>
     
@@ -85,7 +95,7 @@
                     / <%= salvadanaio.obiettivo %> €
                   <% } %>
               </div>
-              <div>  
+              <div> 
                 <% if (typeof salvadanaio.importo_ricorrente == 'number') { %>
                   <%= salvadanaio.importo_ricorrente %> € ad ogni stipendio
                 <% } %>
@@ -101,7 +111,8 @@
       <% } %>
     </div>
 
-<script src="/situazione-attuale.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="/situazione-attuale.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+   
 </body>
 </html>
