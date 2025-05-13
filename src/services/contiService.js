@@ -16,11 +16,25 @@ function getConti() {
     return result;
 }
 
+function getConto(key) {
+    let result = null;
+    for (const contoPath of elencoConti) {
+        const fileInfo = path.join(contoPath, 'info.json');
+        const info = JSON.parse(fs.readFileSync(fileInfo));
+        if (info.key === key) {
+            result = info;
+        }
+    }
+   
+    return result;
+}
+
 function getElencoConti() {
     return elencoConti;
 }
 
 export const contiService = {
     getConti,
+    getConto,
     getElencoConti
 };

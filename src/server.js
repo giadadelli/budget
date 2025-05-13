@@ -40,12 +40,11 @@ app.get('/:conto/situazione-attuale', async (req, res) => {
     const conto = req.params.conto;
     const data = await renderUtility.calcolaSituazione(conto);
     if (data.saldo === 0) {
-      res.render('saldo-zero', { conto });
+      res.render('saldo-zero', { conto, data });
     } else {
       const salvadanai = await Promise.resolve(risparmiService.getSalvadanai(conto));
-      console.log("Salvadanai: ", salvadanai);
 
-      res.render('situazione-attuale', { data, conto, salvadanai });
+      res.render('situazione-attuale', { conto, data, salvadanai });
     }
 
   } catch (error) {

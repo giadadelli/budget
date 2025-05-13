@@ -14,7 +14,7 @@
 
 <body class="">
   <div class="row">
-    <h2 class="col">Situazione Finanziaria</h2>
+    <h2 class="col"><%= data.infoConto.titolo %></h2>
   </div>
   <div class="row">
     <div class="col">
@@ -49,7 +49,7 @@
             <label >Obiettivo</label>
           </div>
           <div class="input-field col s4">
-            <input id="iniziale" type="number" class="validate">
+            <input id="iniziale" type="number" step="0.01" class="validate">
             <label >Importo iniziale</label>
           </div>
           TODO aggiungere import per trasferimento ricorrente

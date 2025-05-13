@@ -43,7 +43,6 @@ async function readCsv(filePath) {
       });
     
       const result = await promise();
-      console.log(result);
       return result;
 }
 
