@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <title>Situazione Finanziaria</title>
+  <title><%= data.infoConto.titolo %></title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -36,7 +36,6 @@
   <dialog id="dialog-crea-salvadanaio" class="rounded-xl p-4 border shadow-lg">
     <form id="form-salvadanaio" method="dialog" class="flex flex-col gap-4">
       <div class="flex flex-col gap-4", style="margin: 10px">
-        titolo,obiettivo,importo-ricorrente,frequenza,inserito
         <div class="row">
           <div class="input-field col s4">
             <input id="titolo" type="text" class="validate">

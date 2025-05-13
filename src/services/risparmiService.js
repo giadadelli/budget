@@ -9,7 +9,7 @@ function getRisparmiFile(key) {
   console.log("getRisparmiFile -> " + fileRisparmi);
 
   if (!existsSync(fileRisparmi)) {
-    const content = 'titolo,obiettivo,importo-ricorrente,frequenza,inserito';
+    const content = 'titolo,obiettivo,importo_ricorrente,frequenza,inserito';
     fs.writeFileSync(fileRisparmi, content);
     console.log("File risparmi.csv created");
   }
@@ -37,6 +37,7 @@ async function getSalvadanai(conto) {
       const saldo = await Promise.resolve(risparmiService.getRisparmiTotalePerSalvadanaio(conto, element.titolo));
       element.saldo = saldo;
       element.obiettivo = element.obiettivo != "null" ? parseFloat(element.obiettivo) : null;
+      element.importo_ricorrente = element.importo_ricorrente != "null" ? parseFloat(element.importo_ricorrente) : null;
       
     }
     
