@@ -133,7 +133,48 @@
       </div>
     </form>
     
-  </dialog>      
+  </dialog>   
+#####
+<div class="row">
+  <% if (salvadanaiNew.length != 0) { %>
+    <div class="row">
+      <div class="col">
+        <h4>I tuoi salvadanai</h4>
+      </div> 
+    </div>
+    <%  Object.keys(salvadanaiNew).forEach((key, idx) => { %>
+      <div class="col s2">
+        <div class="card teal darken-1">
+          <div class="card-content white-text">
+            <span class="card-title" style="text-transform: capitalize"><%= key %></span>
+            <%  salvadanaiNew[key].forEach((salvadanaio, idx) => { %>
+              <div class="row">
+                <div class="col">
+                  <%= salvadanaio.titolo %>: <%= salvadanaio.saldo %>  €
+                  <% if (typeof salvadanaio.obiettivo == 'number') { %>
+                    / <%= salvadanaio.obiettivo %> €
+                  <% } %> <!-- End if -->
+                  <div> 
+                    <% if (typeof salvadanaio.importo_ricorrente == 'number') { %>
+                      <%= salvadanaio.importo_ricorrente %> € ad ogni stipendio
+                    <% } %>
+                    <% if (typeof salvadanaio.importo_ricorrente !== 'number') { %>
+                      Accantonamento manuale
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            <% }) %> <!-- End foreach salvadanaiNew[key] -->
+          </div>
+        </div>
+      </div>
+
+    <% }) %> <!-- End foreach salvadanaiNew -->
+
+
+  <% } %>  <!-- End if -->
+</div>
+  #####   
   <div class="row">
     <% if (salvadanai.length != 0) { %>
       <div class="row">

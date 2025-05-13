@@ -10,7 +10,7 @@ function getRisparmiFile(key) {
   console.log("getRisparmiFile -> " + fileRisparmi);
 
   if (!existsSync(fileRisparmi)) {
-    const content = 'id,titolo,obiettivo,importo_ricorrente,frequenza,inserito';
+    const content = 'id,titolo,obiettivo,importo_ricorrente,frequenza,inserito,etichetta';
     fs.writeFileSync(fileRisparmi, content);
     console.log("File risparmi.csv created");
   }
@@ -48,7 +48,7 @@ async function getSalvadanai(conto) {
       } else {
         element.obiettivo_raggiunto = false;
       }
-      //element.obiettivo_raggiunto = element.obiettivo ? false : element.obiettivo <= element.saldo;
+      element.etichetta = element.etichetta === 'null' ? null : element.etichetta;
     }
     
     return result;
@@ -109,7 +109,7 @@ async function addSalvadanaio(conto, {titolo, obiettivo, iniziale, importo_ricor
     }
 
     let uuid = crypto.randomUUID();
-    const riga = `\n${uuid},${titolo},${obiettivo},${importo_ricorrente},${frequenza},${oggi}`;
+    const riga = `\n${uuid},${titolo},${obiettivo},${importo_ricorrente},${frequenza},${oggi},null`;
     
     const fileRisparmi = risparmiService.getRisparmiFile(conto);
     fs.appendFileSync(fileRisparmi, riga, 'utf8');

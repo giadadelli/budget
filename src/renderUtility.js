@@ -27,6 +27,24 @@ async function calcolaSituazione(conto) {
   }
 }
 
+function calcolaSalvadanai(salvadanai) {
+  //mappa -> id: etichetta, valore: array di salvadanai
+  let salvadanaiMap = {};
+  salvadanai.forEach(sd => {
+    if (sd.etichetta) {
+      if (!salvadanaiMap[sd.etichetta]) {
+        salvadanaiMap[sd.etichetta] = [];
+      }
+      salvadanaiMap[sd.etichetta].push(sd);
+    } else {
+      salvadanaiMap[sd.titolo] = [sd];
+    }
+  });
+
+  return salvadanaiMap;
+}
+
 export const renderUtility = {
-  calcolaSituazione
+  calcolaSituazione,
+  calcolaSalvadanai
 };
