@@ -55,7 +55,7 @@ app.get('/:conto/situazione-attuale', async (req, res) => {
     }
   }
 });
-
+/*
 app.post('/:conto/aggiungi-spesa', async (req, res) => {
   try {
     const conto = req.params.conto;
@@ -66,7 +66,9 @@ app.post('/:conto/aggiungi-spesa', async (req, res) => {
     res.status(500).send('Errore durante il salvataggio');
   }
 });
+*/
 
+//Aggiungi movimento
 app.post('/:conto/movimenti', async (req, res) => {
   try {
     const conto = req.params.conto;
@@ -78,6 +80,20 @@ app.post('/:conto/movimenti', async (req, res) => {
   }
 });
 
+//Aggiungi accantonamento
+app.post('/:conto/accantonamenti', async (req, res) => {
+  try {
+    const conto = req.params.conto;
+    await risparmiService.addMovimentoNew(conto, req.body);
+    res.status(200).send('OK');
+  } catch (err) {
+    console.error('❌ Errore accantonamento:', err.message);
+    res.status(500).send('Errore durante il salvataggio');
+  }
+});
+
+
+//Crea nuovo salvadanaio
 app.post('/:conto/salvadanai', async (req, res) => {
   try {
     const conto = req.params.conto;
@@ -89,6 +105,7 @@ app.post('/:conto/salvadanai', async (req, res) => {
   }
 });
 
+/*
 app.post('/:conto/aggiungi-accantonamenti', async (req, res) => {
   try {
     const conto = req.params.conto;
@@ -99,7 +116,7 @@ app.post('/:conto/aggiungi-accantonamenti', async (req, res) => {
     res.status(500).send('Errore durante il salvataggio');
   }
 });
-
+*/
 app.listen(PORT, () => {
   console.log(`✅ Server avviato su http://localhost:${PORT}`);
 });

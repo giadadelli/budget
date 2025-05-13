@@ -40,16 +40,59 @@ document.getElementById('btn-chiudi-dialog-entrata')?.addEventListener('click', 
 
 //TODO aggiungere controllo che non venga distribuito più dell'importo dell'entrata
 const formEntrata = document.getElementById('form-entrata');
-formEntrata?.addEventListener('submit', (e) => {
+
+formEntrata?.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const data = formEntrata.data.value;
+  const data = formEntrata.data_movimento.value;
   const importo = parseFloat(formEntrata.importo.value);
   const descrizione = formEntrata.descrizione.value;
 
   if (!data || isNaN(importo) || !descrizione) return;
 
-  //TODO salva
+  try {
+    const res = await fetch('/' + window.__CONTO__ + '/movimenti', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+          data: data,
+          importo: importo,
+          categoria: null,
+          sottocategoria: null,
+          descrizione: "Stipendio (" + descrizione + ")"
+        })
+    });
+
+    if (res.ok) {
+
+      const daAccantonare = document.querySelectorAll('.importo_da_accantonare');
+      daAccantonare.forEach(async a => {
+        //TODO salvare accantonamenti
+        console.log("## ", a);
+        const res = await fetch('/' + window.__CONTO__ + '/accantonamenti', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+              data: data,
+              importo: a.value,
+              salvadanaioId: a.name,
+              descrizione: "Accantonamento da stipendio (" + descrizione + ")"
+            })
+        });
+    
+        if (res.ok) {
+          location.reload();
+        } else {
+          alert('Errore durante il salvataggio');
+        }
+      });
+      
+    } else {
+      alert('Errore durante il salvataggio');
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Errore durante la richiesta');
+  }
   
   dialogEntrata.close();
-  dialogSmistamento.showModal();
 });

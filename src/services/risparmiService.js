@@ -127,6 +127,24 @@ async function addSalvadanaio(conto, {titolo, obiettivo, iniziale, importo_ricor
     }
 }
 
+async function addMovimentoNew(conto, {data, importo, salvadanaioId, descrizione }) {
+  if (!conto || !data || !importo || !salvadanaioId) {
+    throw new Error('Dati non validi');
+  }
+
+  const oggi = new Date().toISOString().slice(0, 10);
+  const salvadanai = await Promise.resolve(risparmiService.getSalvadanai(conto));
+  const salvadanaio = salvadanai.filter(s => s.id == salvadanaioId);
+  const categoria = salvadanaio[0].titolo; //TODO usare id
+  
+  // 1. Scrivi i movimenti
+  const riga = `\n${data},${importo},"${categoria}",null,"${descrizione}",${oggi}`;
+  
+  const fileMovimenti = risparmiService.getAccantonamentiFile(conto);
+  fs.appendFileSync(fileMovimenti, riga, 'utf8');
+
+}
+
 async function addMovimento(conto, {data, importo, categoria, sottocategoria, descrizione }) {
   if (!conto || !data || !importo || !categoria) {
     throw new Error('Dati non validi');
@@ -151,5 +169,6 @@ export const risparmiService = {
     getAccantonamentiFile,
     getMovimenti,
     addMovimento,
+    addMovimentoNew,
     getRisparmiTotalePerSalvadanaio
 };

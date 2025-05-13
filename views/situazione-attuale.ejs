@@ -49,15 +49,15 @@
       </div>
       <div class="row">
         <div class="input-field col">
-          <input id="data" type="text" class="datepicker" name="data">
+          <input type="text" class="datepicker" name="data_movimento">
           <label>Data</label>
         </div>
         <div class="input-field col">
-          <input id="importo" type="number" class="validate" name="importo">
+          <input type="number" class="validate" name="importo">
           <label>Importo</label>
         </div>
         <div class="input-field col">
-          <input id="descrizione" type="text" class="validate" name="descrizione">
+          <input type="text" class="validate" name="descrizione">
           <label>Descrizione</label>
         </div>
       </div>
@@ -71,7 +71,7 @@
           <% salvadanai.forEach((salvadanaio, idx) => { %>
             <% if (salvadanaio.frequenza == 'stipendio' && !salvadanaio.obiettivo_raggiunto) { %>
               <div class="input-field col">
-                <input id="<%= salvadanaio.titolo %>" type="number" class="validate" value="0">
+                <input class="importo_da_accantonare" name="<%= salvadanaio.id %>" type="number" class="validate" value="<%= salvadanaio.importo_ricorrente %>">
                 <label><%= salvadanaio.titolo %></label>
               </div>
             <% } %>
@@ -84,9 +84,7 @@
           <a id="btn-chiudi-dialog-entrata" class="waves-effect waves-light btn">Annulla</a>
         </div>
         <div class="col s2 offset-s8">  
-          <button class="btn waves-effect waves-light" type="submit" name="action">Procedi
-            <i class="material-icons right">send</i>
-          </button>
+          <button class="btn waves-effect waves-light" type="submit" name="action">Salva</button>
         
         </div>
       </div>
@@ -175,7 +173,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       var elems = document.querySelectorAll('.datepicker');
-      var instances = M.Datepicker.init(elems, {autoClose: true, defaultDate: new Date()});
+      var instances = M.Datepicker.init(elems, {autoClose: true, defaultDate: new Date(), format: "yyyy-mm-dd"});
     });
 
     document.addEventListener('DOMContentLoaded', function() {
