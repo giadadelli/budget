@@ -26,13 +26,73 @@
     <% if (salvadanai.length == 0) { %>
       <h4>Non hai ancora iniziato a risparmiare</h4>
     <% } %>
+  </div>
   <div class="row">
+    <div class="col">
+      <a id="btn-apri-dialog-entrata" class="waves-effect waves-light btn">Nuova entrata</a>
+    </div>
     <div class="col">
       <a id="btn-apri-dialog-salvadanaio" class="waves-effect waves-light btn">Crea salvadanaio</a>
     </div>
   </div>
     
-    
+  <dialog id="dialog-entrata">
+    <form id="form-entrata" method="dialog" class="flex flex-col gap-2">
+      <div class="row">
+        <div class="col">
+          <select>
+            <!-- <option value="" disabled selected>Tipologia entrata</option> -->
+            <option value="stipendio">Stipendio</option>
+            <!-- <option value="altro">Altro</option> -->
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col">
+          <input id="data" type="text" class="datepicker" name="data">
+          <label>Data</label>
+        </div>
+        <div class="input-field col">
+          <input id="importo" type="number" class="validate" name="importo">
+          <label>Importo</label>
+        </div>
+        <div class="input-field col">
+          <input id="descrizione" type="text" class="validate" name="descrizione">
+          <label>Descrizione</label>
+        </div>
+      </div>
+      
+      <div class="divider"></div>
+        <div class="row">
+          <h6 class="col s12">Distribuzione tra i tuoi salvadanai</h6>
+          <div class="col">Ti viene suggerito di accantonare nei salvadanai dove hai impostato accantonamento ad ogni stipendio e non hai ancora raggiunto l'obiettivo (oppure non hai impostato un obiettivo)</div>
+        </div>
+        <div class="row">
+          <% salvadanai.forEach((salvadanaio, idx) => { %>
+            <% if (salvadanaio.frequenza == 'stipendio' && !salvadanaio.obiettivo_raggiunto) { %>
+              <div class="input-field col">
+                <input id="<%= salvadanaio.titolo %>" type="number" class="validate" value="0">
+                <label><%= salvadanaio.titolo %></label>
+              </div>
+            <% } %>
+          <% }) %>
+        </div>
+      <div class="divider"></div>
+
+      <div class="row">
+        <div class="col s2">
+          <a id="btn-chiudi-dialog-entrata" class="waves-effect waves-light btn">Annulla</a>
+        </div>
+        <div class="col s2 offset-s8">  
+          <button class="btn waves-effect waves-light" type="submit" name="action">Procedi
+            <i class="material-icons right">send</i>
+          </button>
+        
+        </div>
+      </div>
+    </form>
+  </dialog>  
+
   <dialog id="dialog-crea-salvadanaio" class="rounded-xl p-4 border shadow-lg" style="width: 600px;">
     <form id="form-salvadanaio" method="dialog" class="flex flex-col gap-4">
       <div class="flex flex-col gap-4", style="margin: 10px">
@@ -76,43 +136,53 @@
     </form>
     
   </dialog>      
-  </div>
-    <div class="row">
-      <% if (salvadanai.length != 0) { %>
-        <div class="row">
-          <div class="col">
-            <h4>I tuoi salvadanai</h4>
-          </div> 
-        </div>
-        <% salvadanai.forEach((salvadanaio, idx) => { %>
-          <div class="col s2">
-            <div class="card teal darken-1">
-              <div class="card-content white-text">
-                <span class="card-title"><%= salvadanaio.titolo %></span>
-                <div>  
-                  <%= salvadanaio.saldo %>  €
-                  <% if (typeof salvadanaio.obiettivo == 'number') { %>
-                    / <%= salvadanaio.obiettivo %> €
-                  <% } %>
-              </div>
-              <div> 
-                <% if (typeof salvadanaio.importo_ricorrente == 'number') { %>
-                  <%= salvadanaio.importo_ricorrente %> € ad ogni stipendio
+  <div class="row">
+    <% if (salvadanai.length != 0) { %>
+      <div class="row">
+        <div class="col">
+          <h4>I tuoi salvadanai</h4>
+        </div> 
+      </div>
+      <% salvadanai.forEach((salvadanaio, idx) => { %>
+        <div class="col s2">
+          <div class="card teal darken-1">
+            <div class="card-content white-text">
+              <span class="card-title"><%= salvadanaio.titolo %></span>
+              <div>  
+                <%= salvadanaio.saldo %>  €
+                <% if (typeof salvadanaio.obiettivo == 'number') { %>
+                  / <%= salvadanaio.obiettivo %> €
                 <% } %>
-                <% if (typeof salvadanaio.importo_ricorrente !== 'number') { %>
-                  Accantonamento manuale
-                <% } %>
-              </div>
+            </div>
+            <div> 
+              <% if (typeof salvadanaio.importo_ricorrente == 'number') { %>
+                <%= salvadanaio.importo_ricorrente %> € ad ogni stipendio
+              <% } %>
+              <% if (typeof salvadanaio.importo_ricorrente !== 'number') { %>
+                Accantonamento manuale
+              <% } %>
             </div>
           </div>
         </div>
-  
-        <% }) %>
-      <% } %>
-    </div>
+      </div>
 
-    <script src="/situazione-attuale.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-   
+      <% }) %>
+    <% } %>
+  </div>
+
+  <script src="/situazione-attuale.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('.datepicker');
+      var instances = M.Datepicker.init(elems, {autoClose: true, defaultDate: new Date()});
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('select');
+      var instances = M.FormSelect.init(elems, {});
+    });
+
+  </script>
 </body>
 </html>

@@ -38,7 +38,16 @@ async function getSalvadanai(conto) {
       element.saldo = saldo;
       element.obiettivo = element.obiettivo != "null" ? parseFloat(element.obiettivo) : null;
       element.importo_ricorrente = element.importo_ricorrente != "null" ? parseFloat(element.importo_ricorrente) : null;
-      
+      if (element.obiettivo) {
+        if (element.obiettivo <= element.saldo) {
+          element.obiettivo_raggiunto = true;
+        } else {
+          element.obiettivo_raggiunto = false;
+        }
+      } else {
+        element.obiettivo_raggiunto = false;
+      }
+      //element.obiettivo_raggiunto = element.obiettivo ? false : element.obiettivo <= element.saldo;
     }
     
     return result;
