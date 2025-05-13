@@ -85,9 +85,17 @@
                     / <%= salvadanaio.obiettivo %> €
                   <% } %>
               </div>
+              <div>  
+                <% if (typeof salvadanaio.importo_ricorrente == 'number') { %>
+                  <%= salvadanaio.importo_ricorrente %> € ad ogni stipendio
+                <% } %>
+                <% if (typeof salvadanaio.importo_ricorrente !== 'number') { %>
+                  Accantonamento manuale
+                <% } %>
               </div>
             </div>
           </div>
+        </div>
   
         <% }) %>
       <% } %>
