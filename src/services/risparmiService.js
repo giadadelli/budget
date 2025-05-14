@@ -77,22 +77,6 @@ function getMovimenti(conto) {
   return fileUtility.readCsv(risparmiService.getAccantonamentiFile(conto));
 }
 
-async function getRisparmiTotale(conto) {
-  const movimenti = await Promise.resolve(risparmiService.getMovimenti(conto));
-  return movimenti.reduce(
-    (accumulator, currentValue) => accumulator + currentValue.importo,
-    0,
-  );
-}
-
-async function getAccantonatoTotale(conto) {
-  const movimenti = await Promise.resolve(risparmiService.getMovimenti(conto));
-  return movimenti.filter(m => m.importo > 0).reduce(
-    (accumulator, currentValue) => accumulator + currentValue.importo,
-    0,
-  );
-}
-
 async function getRisparmiTotalePerSalvadanaio(conto, salvadanaio) {
   const movimenti = await Promise.resolve(risparmiService.getMovimenti(conto));
   return movimenti.filter((m) => m.categoria == salvadanaio).reduce(
@@ -170,7 +154,6 @@ async function addMovimento(conto, {data, importo, categoria, sottocategoria, de
 
 export const risparmiService = {
     getSalvadanai,
-    getRisparmiTotale,
     addSalvadanaio,
     getSalvadanaiCsv,
     getRisparmiFile,
@@ -178,6 +161,5 @@ export const risparmiService = {
     getMovimenti,
     addMovimento,
     addMovimentoNew,
-    getRisparmiTotalePerSalvadanaio,
-    getAccantonatoTotale
-};
+    getRisparmiTotalePerSalvadanaio
+  };

@@ -2,22 +2,21 @@ import dotenv from 'dotenv';
 import { movimentiService } from './services/movimentiService.js';
 import { risparmiService } from './services/risparmiService.js';
 import { contiService } from './services/contiService.js';
+import { sommarioService } from './services/sommarioService.js';
 
 dotenv.config();
 
 async function calcolaSituazione(conto) {
   const infoConto = contiService.getConto(conto);
   
-  const saldo = await Promise.resolve(movimentiService.getSaldo(conto));
+  const saldo = await Promise.resolve(sommarioService.getSaldo(conto));
   if (saldo == 0) {
     return {
       saldo,
       infoConto
     };
   } else {
-
-    const risparmi = await Promise.resolve(risparmiService.getAccantonatoTotale(conto));
-    const avanzo = saldo - risparmi;
+    const avanzo = await Promise.resolve(sommarioService.getDisponibilita(conto));
     
     return {
       saldo,
