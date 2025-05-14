@@ -31,6 +31,12 @@ document.getElementById('form-salvadanaio').addEventListener('submit', async (e)
     }
   });
 
+//Registra spese
+const btnUscita = document.getElementById("btn-apri-dialog-uscita");
+const dialogUscita = document.getElementById('dialog-uscita');
+
+btnUscita?.addEventListener('click', () => dialogUscita.showModal());
+
 // Nuova entrata
 const btnEntrata = document.getElementById('btn-apri-dialog-entrata');
 const dialogEntrata = document.getElementById('dialog-entrata');
@@ -43,7 +49,6 @@ const inputs = document.querySelectorAll('.importo_da_accantonare');
 const totaleNonAccantonato = document.getElementById('totale_non_accantonato');
 const importoInput = document.getElementById('importo');
 
-//TODO aggiungere controllo che non venga distribuito più dell'importo dell'entrata
 inputs?.forEach(input => {
   input.addEventListener('change', () => {
     updateTotaleNonAccantonato(); 
