@@ -38,8 +38,23 @@ const dialogEntrata = document.getElementById('dialog-entrata');
 btnEntrata?.addEventListener('click', () => dialogEntrata.showModal());
 document.getElementById('btn-chiudi-dialog-entrata')?.addEventListener('click', () => dialogEntrata.close());
 
-//TODO aggiungere controllo che non venga distribuito più dell'importo dell'entrata
 const formEntrata = document.getElementById('form-entrata');
+const inputs = document.querySelectorAll('.importo_da_accantonare');
+const totaleNonAccantonato = document.getElementById('totale_non_accantonato');
+const importoInput = document.getElementById('importo');
+
+//TODO aggiungere controllo che non venga distribuito più dell'importo dell'entrata
+inputs?.forEach(input => {
+  input.addEventListener('change', () => {
+    updateTotaleNonAccantonato(); 
+  });
+});
+
+importoInput?.addEventListener('change', () => {
+  updateTotaleNonAccantonato(); 
+});
+
+updateTotaleNonAccantonato();
 
 formEntrata?.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -96,3 +111,26 @@ formEntrata?.addEventListener('submit', async (e) => {
   
   dialogEntrata.close();
 });
+
+//Utility
+
+function updateTotaleNonAccantonato() {
+  const val = (importoInput.value? parseFloat(importoInput.value) : 0) - getTotaleAccantonato();
+  totaleNonAccantonato.innerHTML = val;
+  const formEntrataSaveBtn = document.getElementById('form-entrata_save_btn');
+  if (val < 0) {
+    formEntrataSaveBtn.disabled = true;
+    totaleNonAccantonato.className = 'red-text';
+  } else {
+    formEntrataSaveBtn.disabled = false;
+    totaleNonAccantonato.className = 'black-text';
+  }
+}
+
+function getTotaleAccantonato() {
+  let totaleAccantonatoValue = 0;
+  inputs?.forEach(input => {
+    totaleAccantonatoValue += parseFloat(input.value);
+  });
+  return totaleAccantonatoValue;
+}

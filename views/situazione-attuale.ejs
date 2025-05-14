@@ -54,7 +54,7 @@
           <label>Data</label>
         </div>
         <div class="input-field col">
-          <input type="number" class="validate" name="importo">
+          <input type="number" class="validate" name="importo" id="importo">
           <label>Importo</label>
         </div>
         <div class="input-field col">
@@ -79,13 +79,18 @@
           <% }) %>
         </div>
       <div class="divider"></div>
+      <div class="row">
+        <div class="col">
+          Totale non accantonato (aumenterà la tua disponibilità): <span id="totale_non_accantonato"></span>
+        </div>
+      </div>
 
       <div class="row">
         <div class="col s2">
           <a id="btn-chiudi-dialog-entrata" class="waves-effect waves-light btn">Annulla</a>
         </div>
         <div class="col s2 offset-s8">  
-          <button class="btn waves-effect waves-light" type="submit" name="action">Salva</button>
+          <button class="btn waves-effect waves-light" type="submit" name="action" id="form-entrata_save_btn">Salva</button>
         
         </div>
       </div>
@@ -189,6 +194,10 @@
       var instances = M.FormSelect.init(elems, {});
     });
 
+    document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('.tooltipped');
+      var instances = M.Tooltip.init(elems, {});
+    });
   </script>
 </body>
 </html>
