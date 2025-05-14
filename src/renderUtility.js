@@ -43,7 +43,33 @@ function calcolaSalvadanai(salvadanai) {
   return salvadanaiMap;
 }
 
+async function getMovimenti(conto) {
+  let result = [];
+  const movimenti = await Promise.resolve(movimentiService.getMovimenti(conto));
+  result.push(...movimenti);
+
+  const speseDaRisparmi = await Promise.resolve(risparmiService.getSpese(conto));
+  result.push(...speseDaRisparmi);
+
+  result.sort((a, b) => {
+    const dateA = Date.parse(a.data);
+    const dateB = Date.parse(b.data);
+    if (dateA < dateB) {
+      return 1;
+    }
+    if (dateA > dateB) {
+      return -1;
+    }
+  
+    // names must be equal
+    return 0;
+  });
+
+  return result;
+}
+
 export const renderUtility = {
   calcolaSituazione,
-  calcolaSalvadanai
+  calcolaSalvadanai,
+  getMovimenti
 };

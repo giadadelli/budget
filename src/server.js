@@ -35,6 +35,22 @@ app.get('/', async (req, res) => {
  
 });
 
+app.get('/:conto/movimenti', async (req, res) => {
+  try {
+    const conto = req.params.conto;
+    const data = await renderUtility.calcolaSituazione(conto);
+    const movimenti = await renderUtility.getMovimenti(conto);
+    console.log("Movimenti ", movimenti);
+    res.render('movimenti', { conto, data, movimenti });
+
+  } catch (error) {
+    console.error('❌ Errore nel calcolo della situazione:', error);
+    if (!res.headersSent) {
+      res.status(500).send('Errore interno del server');
+    }
+  }
+});
+
 app.get('/:conto/situazione-attuale', async (req, res) => {
   try {
     const conto = req.params.conto;

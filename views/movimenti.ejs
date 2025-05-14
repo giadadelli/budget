@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= data.infoConto.titolo %></title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<script>
+  window.__CONTO__ = <%- JSON.stringify(conto) %>;
+</script>
+
+<body class="">
+  <div class="row">
+    <div class="col">
+      <a href="/" class="waves-effect orange darken-2 btn">Cambia conto</a>
+    </div>
+    <div class="col">
+      <a href="situazione-attuale" class="waves-effect orange darken-2 btn">Panoramica risparmi</a>
+    </div>
+  </div>
+  
+  <div class="row">
+    <h2 class="col s12"><%= data.infoConto.titolo %></h2>
+    <div class="row"><%= data.infoConto.descrizione %></div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <h4>Saldo: <%= data.saldo.toFixed(2) %> € di cui disponibile <%= data.avanzo.toFixed(2) %> €</h4>
+    </div> 
+  </div>
+   
+  <div class="row">
+    <% if (movimenti.length == 0) { %>
+      <h4>Non ci sono movimenti su questo conto</h4>
+    <% } %>
+    <% if (movimenti.length > 0) { %>
+      <table>
+        <thead>
+          <tr>
+              <th>Data</th>
+              <th>Importo</th>
+              <th>Descrizione</th>
+              <th>Salvadanaio</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%  movimenti.forEach((movimento, idx) => { %>
+            <tr>
+              <td><%= movimento.data %></td>
+              <td><%= movimento.importo %></td>
+              <td><%= movimento.descrizione %></td>
+              <% if (movimento.categoria !== 'null') { %>
+                <td><%= movimento.categoria %></td>
+              <% } %>
+              <% if (movimento.categoria === 'null') { %>
+                <td>--</td>
+              <% } %>
+
+            </tr>
+          <% }) %> <!-- End foreach movimenti -->
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+  
+  
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+  
+  </script>
+</body>
+</html>
