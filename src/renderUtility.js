@@ -16,7 +16,7 @@ async function calcolaSituazione(conto) {
     };
   } else {
 
-    const risparmi = await Promise.resolve(risparmiService.getRisparmiTotale(conto));
+    const risparmi = await Promise.resolve(risparmiService.getAccantonatoTotale(conto));
     const avanzo = saldo - risparmi;
     
     return {

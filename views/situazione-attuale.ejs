@@ -40,7 +40,7 @@
     </div>
   </div>
     
-  <dialog id="dialog-uscita">
+  <dialog id="dialog-uscita" style="height: auto;">
     <form id="form-uscita" method="dialog" class="flex flex-col gap-2">
       <div class="row">
         <div class="input-field col">
@@ -58,7 +58,7 @@
       </div>
       <div class="row">
         <div>Seleziona il salvadanaio se vuoi che i soldi vengano prelevati da qui e non dalla tua disponibilità</div>
-        <select>
+        <select name="salvadanaio">
           <option value="" selected>Nessun salvadanaio</option>
               <%  salvadanai.forEach((salvadanaio, idx) => { %>
                 <option value="<%= salvadanaio.id %>"><%= salvadanaio.titolo %></option>

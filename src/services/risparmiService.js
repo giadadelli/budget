@@ -85,6 +85,14 @@ async function getRisparmiTotale(conto) {
   );
 }
 
+async function getAccantonatoTotale(conto) {
+  const movimenti = await Promise.resolve(risparmiService.getMovimenti(conto));
+  return movimenti.filter(m => m.importo > 0).reduce(
+    (accumulator, currentValue) => accumulator + currentValue.importo,
+    0,
+  );
+}
+
 async function getRisparmiTotalePerSalvadanaio(conto, salvadanaio) {
   const movimenti = await Promise.resolve(risparmiService.getMovimenti(conto));
   return movimenti.filter((m) => m.categoria == salvadanaio).reduce(
@@ -170,5 +178,6 @@ export const risparmiService = {
     getMovimenti,
     addMovimento,
     addMovimentoNew,
-    getRisparmiTotalePerSalvadanaio
+    getRisparmiTotalePerSalvadanaio,
+    getAccantonatoTotale
 };
