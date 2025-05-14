@@ -25,7 +25,7 @@ function getConto(key) {
             result = info;
         }
     }
-   
+    console.log("Info Conto ", result);
     return result;
 }
 
