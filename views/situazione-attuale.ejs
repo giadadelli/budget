@@ -42,6 +42,33 @@
     
   <dialog id="dialog-uscita">
     <form id="form-uscita" method="dialog" class="flex flex-col gap-2">
+      <div class="row">
+        <div class="input-field col">
+          <input type="text" class="datepicker" name="data_movimento">
+          <label>Data</label>
+        </div>
+        <div class="input-field col">
+          <input type="number" class="validate" name="importo" id="importo">
+          <label>Importo</label>
+        </div>
+        <div class="input-field col">
+          <input type="text" class="validate" name="descrizione">
+          <label>Descrizione</label>
+        </div>
+      </div>
+      <div class="row">
+        <div>Seleziona il salvadanaio se vuoi che i soldi vengano prelevati da qui e non dalla tua disponibilità</div>
+        <select>
+          <option value="" selected>Nessun salvadanaio</option>
+              <%  salvadanai.forEach((salvadanaio, idx) => { %>
+                <option value="<%= salvadanaio.id %>"><%= salvadanaio.titolo %></option>
+              <% }) %> <!-- End foreach salvadanai -->
+
+          <!-- <option value="altro">Altro</option> -->
+        </select>
+      </div>
+      </div>
+
 
       <div class="row">
         <div class="col s2">
