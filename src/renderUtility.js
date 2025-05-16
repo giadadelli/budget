@@ -1,8 +1,7 @@
 import dotenv from 'dotenv';
-import { movimentiService } from './services/movimentiService.js';
-import { risparmiService } from './services/risparmiService.js';
 import { contiService } from './services/contiService.js';
 import { sommarioService } from './services/sommarioService.js';
+
 
 dotenv.config();
 
@@ -17,11 +16,12 @@ async function calcolaSituazione(conto) {
     };
   } else {
     const avanzo = await Promise.resolve(sommarioService.getDisponibilita(conto));
-    
+    const ultimoAggiornamento = await Promise.resolve(sommarioService.getUltimoAggiornamento(conto));
     return {
       saldo,
       avanzo,
-      infoConto
+      infoConto,
+      ultimoAggiornamento
     };
   }
 }
@@ -44,28 +44,7 @@ function calcolaSalvadanai(salvadanai) {
 }
 
 async function getMovimenti(conto) {
-  let result = [];
-  const movimenti = await Promise.resolve(movimentiService.getMovimenti(conto));
-  result.push(...movimenti);
-
-  const speseDaRisparmi = await Promise.resolve(risparmiService.getSpese(conto));
-  result.push(...speseDaRisparmi);
-
-  result.sort((a, b) => {
-    const dateA = Date.parse(a.data);
-    const dateB = Date.parse(b.data);
-    if (dateA < dateB) {
-      return 1;
-    }
-    if (dateA > dateB) {
-      return -1;
-    }
-  
-    // names must be equal
-    return 0;
-  });
-
-  return result;
+  return sommarioService.getAllMovimentiOrderByData(conto);
 }
 
 export const renderUtility = {

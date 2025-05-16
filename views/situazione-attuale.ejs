@@ -28,9 +28,13 @@
     <div class="row"><%= data.infoConto.descrizione %></div>
   </div>
   <div class="row">
-    <div class="col">
+    <div class="col s12">
       <h4>Saldo: <%= data.saldo.toFixed(2) %> € di cui disponibile <%= data.avanzo.toFixed(2) %> €</h4>
     </div> 
+    <div class="col s12">
+      <h5>Aggiornato al <%= data.ultimoAggiornamento %></h5>
+    </div> 
+
   </div>
    
   <div class="row">

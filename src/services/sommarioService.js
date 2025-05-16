@@ -1,5 +1,6 @@
 import { movimentiService } from './movimentiService.js';
 import { risparmiService } from './risparmiService.js';
+import { dateUtility } from './util/dateUtils.js';
 
 async function getRisparmiSpesi(conto) {
     //somma di tutti gli accantonamenti negativi
@@ -39,9 +40,29 @@ async function getDisponibilita(conto) {
     return movimenti - risparmi;
 }
 
+async function getAllMovimentiOrderByData(conto) {
+    let result = [];
+    const movimenti = await Promise.resolve(movimentiService.getMovimenti(conto));
+    result.push(...movimenti);
+
+    const speseDaRisparmi = await Promise.resolve(risparmiService.getSpese(conto));
+    result.push(...speseDaRisparmi);
+    result.sort((a, b) => dateUtility.compare(a.data, b.data));
+
+    return result;
+}
+
+async function getUltimoAggiornamento(conto) {
+    const result = await Promise.resolve(sommarioService.getAllMovimentiOrderByData(conto));
+
+    return result.length > 0 ? result[0].data : null;
+}
+
 export const sommarioService = {
     getRisparmiSpesi,
     getRisparmi,
     getSaldo,
-    getDisponibilita
+    getDisponibilita,
+    getAllMovimentiOrderByData,
+    getUltimoAggiornamento
 };
