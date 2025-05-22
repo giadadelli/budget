@@ -44,6 +44,7 @@ formEntrata?.addEventListener('submit', async (e) => {
 
     if (res.ok) {
 
+      let error = false;
       const daAccantonare = document.querySelectorAll('.importo_da_accantonare');
       daAccantonare.forEach(async a => {
 
@@ -60,13 +61,16 @@ formEntrata?.addEventListener('submit', async (e) => {
               })
           });
       
-          if (res.ok) {
-            location.reload();
-          } else {
+          if (!res.ok) {
+            error = true;
             alert('Errore durante il salvataggio');
           }
         }
       });
+
+      if (!error) {
+        location.reload();
+      }
       
     } else {
       alert('Errore durante il salvataggio');
