@@ -7,6 +7,7 @@ import { renderUtility } from './renderUtility.js';
 import { movimentiService } from './services/movimentiService.js';
 import { contiService } from './services/contiService.js';
 import { risparmiService } from './services/risparmiService.js';
+import { distribuzioneService } from './services/distribuzioneService.js';
 
 dotenv.config();
 
@@ -98,6 +99,17 @@ app.post('/:conto/accantonamenti', async (req, res) => {
   }
 });
 
+//Aggiungi distribuzione
+app.post('/:conto/distribuzioni', async (req, res) => {
+  try {
+    const conto = req.params.conto;
+    await distribuzioneService.addDistribuzione(conto, req.body);
+    res.status(200).send('OK');
+  } catch (err) {
+    console.error('❌ Errore distribuzione:', err.message);
+    res.status(500).send('Errore durante il salvataggio');
+  }
+});
 
 //Crea nuovo salvadanaio
 app.post('/:conto/salvadanai', async (req, res) => {

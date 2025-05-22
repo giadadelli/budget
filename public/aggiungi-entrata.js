@@ -50,12 +50,18 @@ formEntrata?.addEventListener('submit', async (e) => {
     });
 
     if (res.ok) {
-
+      //Salvo gli accantonamenti
       let error = false;
+      let distribuzioni = [];
       const daAccantonare = document.querySelectorAll('.importo_da_accantonare');
       daAccantonare.forEach(async a => {
 
         if (parseFloat(a.value) > 0) {
+
+          distribuzioni.push({
+            salvadanaioId: a.name,
+            importo: a.value
+          });
 
           const res = await fetch('/' + window.__CONTO__ + '/accantonamenti', {
             method: 'POST',
@@ -64,7 +70,7 @@ formEntrata?.addEventListener('submit', async (e) => {
                 data: data,
                 importo: a.value,
                 salvadanaioId: a.name,
-                descrizione: "Accantonamento da stipendio (" + descrizione + ")"
+                descrizione: "Accantonamento da " + descrizione
               })
           });
       
@@ -74,6 +80,19 @@ formEntrata?.addEventListener('submit', async (e) => {
           }
         }
       });
+
+      //Salvo la distribuzione
+      if (salvaDistribuzioneBtn.checked && nomeDistribuzione.value) {
+        const res = await fetch('/' + window.__CONTO__ + '/distribuzioni', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+              nome: nomeDistribuzione.value,
+              distribuzioni: distribuzioni
+            })
+        });
+      }
+
 
       if (!error) {
         location.reload();
