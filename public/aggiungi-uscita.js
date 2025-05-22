@@ -15,7 +15,7 @@ formUscita?.addEventListener('submit', async (e) => {
   const tot = [...rowsContainer.querySelectorAll('.riga-spesa')].length;
   let totOk = 0;
   let totKo = 0;
-  console.log("### ", [...rowsContainer.querySelectorAll('.riga-spesa')]);
+  
   const spese = [...rowsContainer.querySelectorAll('.riga-spesa')].map(async wrapper => {
     const data = wrapper.querySelector('input[name="data_movimento"]').value;
     const importo = parseFloat(wrapper.querySelector('input[name="importo"]').value);
@@ -83,11 +83,11 @@ function createNewLine() {
   wrapper.innerHTML = `
    
     <div class="input-field col">
-      <input type="text" class="datepicker" name="data_movimento">
+      <input type="text" class="datepicker" name="data_movimento" id="datepicker-${id}">
       <label>Data</label>
     </div>
     <div class="input-field col">
-      <input type="number" class="validate" name="importo">
+      <input type="number" class="validate" step="0.01" name="importo">
       <label>Importo</label>
     </div>
     <div class="input-field col">
@@ -116,6 +116,7 @@ function createNewLine() {
   rowsContainer.appendChild(wrapper);
 
   M.FormSelect.init(document.querySelectorAll('select'), {});
-  M.Datepicker.init(document.querySelectorAll('.datepicker'), {"autoClose": true, "format": "dd-mm-yyyy"});
+  
+  M.Datepicker.init(document.getElementById('datepicker-' + id), {"autoClose": true, "format": "yyyy-mm-dd"});
 
 }

@@ -46,23 +46,25 @@ formEntrata?.addEventListener('submit', async (e) => {
 
       const daAccantonare = document.querySelectorAll('.importo_da_accantonare');
       daAccantonare.forEach(async a => {
-        //TODO salvare accantonamenti
-        console.log("## ", a);
-        const res = await fetch('/' + window.__CONTO__ + '/accantonamenti', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-              data: data,
-              importo: a.value,
-              salvadanaioId: a.name,
-              descrizione: "Accantonamento da stipendio (" + descrizione + ")"
-            })
-        });
-    
-        if (res.ok) {
-          location.reload();
-        } else {
-          alert('Errore durante il salvataggio');
+
+        if (parseFloat(a.value) > 0) {
+
+          const res = await fetch('/' + window.__CONTO__ + '/accantonamenti', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                data: data,
+                importo: a.value,
+                salvadanaioId: a.name,
+                descrizione: "Accantonamento da stipendio (" + descrizione + ")"
+              })
+          });
+      
+          if (res.ok) {
+            location.reload();
+          } else {
+            alert('Errore durante il salvataggio');
+          }
         }
       });
       
