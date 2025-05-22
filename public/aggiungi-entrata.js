@@ -11,12 +11,13 @@ const importoInput = document.getElementById('importo');
 
 const salvaDistribuzioneBtn = document.getElementById('salva-distribuzione');
 const nomeDistribuzione = document.getElementById('nome-distribuzione');
-
+nomeDistribuzione.hidden = !salvaDistribuzioneBtn.checked;
 salvaDistribuzioneBtn?.addEventListener('change', () => {
   nomeDistribuzione.hidden = !salvaDistribuzioneBtn.checked;
 });
 
 inputs?.forEach(input => {
+  input.value = 0;
   input.addEventListener('change', () => {
     updateTotaleNonAccantonato(); 
   });
@@ -127,7 +128,7 @@ function updateTotaleNonAccantonato() {
 function getTotaleAccantonato() {
   let totaleAccantonatoValue = 0;
   inputs?.forEach(input => {
-    totaleAccantonatoValue += parseFloat(input.value);
+    totaleAccantonatoValue += input.value? parseFloat(input.value) : 0;
   });
   return totaleAccantonatoValue;
 }
