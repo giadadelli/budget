@@ -10,7 +10,7 @@ function getRisparmiFile(key) {
   console.log("getRisparmiFile -> " + fileRisparmi);
 
   if (!existsSync(fileRisparmi)) {
-    const content = 'id,titolo,obiettivo,importo_ricorrente,frequenza,inserito,etichetta';
+    const content = 'id,titolo,obiettivo,inserito,etichetta';
     fs.writeFileSync(fileRisparmi, content);
     console.log("File risparmi.csv created");
   }
@@ -38,7 +38,6 @@ async function getSalvadanai(conto) {
       const saldo = await Promise.resolve(risparmiService.getRisparmiTotalePerSalvadanaio(conto, element.titolo));
       element.saldo = saldo;
       element.obiettivo = element.obiettivo != "null" ? parseFloat(element.obiettivo) : null;
-      element.importo_ricorrente = element.importo_ricorrente != "null" ? parseFloat(element.importo_ricorrente) : null;
       if (element.obiettivo) {
         if (element.obiettivo <= element.saldo) {
           element.obiettivo_raggiunto = true;
@@ -90,23 +89,17 @@ async function getRisparmiTotalePerSalvadanaio(conto, salvadanaio) {
   );
 }
 
-async function addSalvadanaio(conto, {titolo, obiettivo, iniziale, importo_ricorrente}) {
+async function addSalvadanaio(conto, {titolo, obiettivo, iniziale}) {
     if (!titolo) {
       throw new Error('Nessuna spesa da salvare');
     }
   
     obiettivo = obiettivo > 0 ? obiettivo : null;
     const oggi = new Date().toISOString().slice(0, 10);
-    //'id,titolo,obiettivo,importo_ricorrente,frequenza,inserito'
-    let frequenza = 'manuale';
-    if (importo_ricorrente != null && importo_ricorrente > 0) {
-      frequenza = 'stipendio';
-    } else {
-      importo_ricorrente = null;
-    }
+    //'id,titolo,obiettivo,inserito'
 
     let uuid = crypto.randomUUID();
-    const riga = `\n${uuid},${titolo},${obiettivo},${importo_ricorrente},${frequenza},${oggi},null`;
+    const riga = `\n${uuid},${titolo},${obiettivo},${oggi},null`;
     
     const fileRisparmi = risparmiService.getRisparmiFile(conto);
     fs.appendFileSync(fileRisparmi, riga, 'utf8');

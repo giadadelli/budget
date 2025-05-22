@@ -14,8 +14,7 @@ document.getElementById('form-salvadanaio').addEventListener('submit', async (e)
         body: JSON.stringify({
             "titolo": document.getElementById('titolo').value,
             "obiettivo": document.getElementById('obiettivo').value,
-            "iniziale": document.getElementById('iniziale').value,
-            "importo_ricorrente": document.getElementById('importo_ricorrente').value
+            "iniziale": document.getElementById('iniziale').value
         })
       });
   

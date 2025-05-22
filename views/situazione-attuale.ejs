@@ -11,6 +11,7 @@
 <script>
   window.__CONTO__ = <%- JSON.stringify(conto) %>;
   window.__SALVADANAI__ = <%- JSON.stringify(salvadanai) %>;
+  window.__DISTRIBUZIONI__ = [];
 </script>
 
 <body class="">
@@ -96,20 +97,73 @@
       </div>
       
       <div class="divider"></div>
-        <div class="row">
-          <h6 class="col s12">Distribuzione tra i tuoi salvadanai</h6>
-          <div class="col">Ti viene suggerito di accantonare nei salvadanai dove hai impostato accantonamento ad ogni stipendio e non hai ancora raggiunto l'obiettivo (oppure non hai impostato un obiettivo)</div>
-        </div>
-        <div class="row">
-          <% salvadanai.forEach((salvadanaio, idx) => { %>
-            <% if (salvadanaio.frequenza == 'stipendio' && !salvadanaio.obiettivo_raggiunto) { %>
-              <div class="input-field col">
-                <input class="importo_da_accantonare" name="<%= salvadanaio.id %>" type="number" class="validate" value="<%= salvadanaio.importo_ricorrente %>">
-                <label><%= salvadanaio.titolo %></label>
+      <div class="row">
+        <ul class="collapsible">
+          <li>
+            <div class="collapsible-header">
+              <!-- TODO se ci sono distribuzioni: "oppure distribuisci manualmente" -->
+              Distribuisci manualmente l'entrata tra i tuoi salvadanai
+              <i class="material-icons">arrow_downward</i></div>
+            <div class="collapsible-body">
+              <div class="row"> <!-- Prima quelli senza obiettivo -->
+                <% salvadanai.forEach((salvadanaio, idx) => { %>
+                  <% if (typeof salvadanaio.obiettivo != 'number') { %>
+                    <div class="input-field col">
+                      <input class="importo_da_accantonare" name="<%= salvadanaio.id %>" type="number" class="validate" value="0">
+                      <label><%= salvadanaio.titolo %> (
+                        <%= salvadanaio.saldo %>  €
+                        <% if (typeof salvadanaio.obiettivo == 'number') { %>
+                          / <%= salvadanaio.obiettivo %> €
+                        <% } %> <!-- End if -->
+                      )</label>
+                    </div>
+                  <% } %> <!-- End if -->
+                <% }) %>
               </div>
-            <% } %>
-          <% }) %>
-        </div>
+              <div class="row"> <!-- Poi quelli con obiettivo non raggiunto -->
+                <% salvadanai.forEach((salvadanaio, idx) => { %>
+                  <% if (typeof salvadanaio.obiettivo == 'number' && salvadanaio.obiettivo > salvadanaio.saldo) { %>
+                    <div class="input-field col">
+                      <input class="importo_da_accantonare" name="<%= salvadanaio.id %>" type="number" class="validate" value="0">
+                      <label><%= salvadanaio.titolo %> (
+                        <%= salvadanaio.saldo %>  €
+                        <% if (typeof salvadanaio.obiettivo == 'number') { %>
+                          / <%= salvadanaio.obiettivo %> €
+                        <% } %> <!-- End if -->
+                      )</label>
+                    </div>
+                  <% } %> <!-- End if -->
+                <% }) %>
+              </div>
+              <div class="row"> <!-- Infine quelli con obiettivo raggiunto -->
+                <% salvadanai.forEach((salvadanaio, idx) => { %>
+                  <% if (typeof salvadanaio.obiettivo == 'number' && salvadanaio.obiettivo <= salvadanaio.saldo) { %>
+                    <div class="input-field col">
+                      <input class="importo_da_accantonare" name="<%= salvadanaio.id %>" type="number" class="validate" value="0">
+                      <label><%= salvadanaio.titolo %> (
+                        <%= salvadanaio.saldo %>  €
+                        <% if (typeof salvadanaio.obiettivo == 'number') { %>
+                          / <%= salvadanaio.obiettivo %> €
+                        <% } %> <!-- End if -->
+                      )</label>
+                    </div>
+                  <% } %> <!-- End if -->
+                <% }) %>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <label>
+                    <input type="checkbox" id="salva-distribuzione" />
+                    <span>Salva questa distribuzione</span>
+                  </label>
+                  <input placeholder="Inserisci qui il nome di questa distribuzione" id="nome-distribuzione" type="text" class="validate" hidden>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
       <div class="divider"></div>
       <div class="row">
         <div class="col">
@@ -152,12 +206,6 @@
           </div>
         </div>
         <div class="divider"></div>
-        <div class="row">
-          <div class="input-field col s12">
-            <input id="importo_ricorrente" type="number" step="0.01" class="validate">
-            <label>Accantonamento ad ogni stipendio</label>
-          </div>
-        </div>
       </div>
     
     
@@ -190,14 +238,6 @@
                   <% if (typeof salvadanaio.obiettivo == 'number') { %>
                     / <%= salvadanaio.obiettivo %> €
                   <% } %> <!-- End if -->
-                  <div> 
-                    <% if (typeof salvadanaio.importo_ricorrente == 'number') { %>
-                      <%= salvadanaio.importo_ricorrente %> € ad ogni stipendio
-                    <% } %>
-                    <% if (typeof salvadanaio.importo_ricorrente !== 'number') { %>
-                      Accantonamento manuale
-                    <% } %>
-                  </div>
                 </div>
               </div>
             <% }) %> <!-- End foreach salvadanaiNew[key] -->
@@ -231,6 +271,12 @@
       var elems = document.querySelectorAll('.tooltipped');
       var instances = M.Tooltip.init(elems, {});
     });
+
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.collapsible');
+    var instances = M.Collapsible.init(elems, {});
+  });
   </script>
 </body>
 </html>
