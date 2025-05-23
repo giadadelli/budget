@@ -11,7 +11,7 @@
 <script>
   window.__CONTO__ = <%- JSON.stringify(conto) %>;
   window.__SALVADANAI__ = <%- JSON.stringify(salvadanai) %>;
-  window.__DISTRIBUZIONI__ = [];
+  window.__DISTRIBUZIONI__ = <%- JSON.stringify(distribuzioni) %>;
 </script>
 
 <body class="">
@@ -101,10 +101,24 @@
         <ul class="collapsible">
           <li>
             <div class="collapsible-header">
-              <!-- TODO se ci sono distribuzioni: "oppure distribuisci manualmente" -->
-              Distribuisci manualmente l'entrata tra i tuoi salvadanai
-              <i class="material-icons">arrow_downward</i></div>
+              Distribuisci l'entrata tra i tuoi salvadanai
+              <i class="material-icons">arrow_downward</i>
+            </div>
+
             <div class="collapsible-body">
+              <% if (Object.keys(distribuzioni).length != 0) { %>
+                <div class="row">
+                  Applica distribuzione
+                  <select>
+                    <option value="" selected>Nessuna</option>
+                    <%  Object.keys(distribuzioni).forEach((key, idx) => { %>
+                      <option value="<%= key %>"><%= distribuzioni[key].nome %></option>
+                    <% })%>
+                  </select>
+
+                </div>
+              <% } %>
+
               <div class="row"> <!-- Prima quelli senza obiettivo -->
                 <% salvadanai.forEach((salvadanaio, idx) => { %>
                   <% if (typeof salvadanaio.obiettivo != 'number') { %>

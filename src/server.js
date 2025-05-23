@@ -60,11 +60,15 @@ app.get('/:conto/situazione-attuale', async (req, res) => {
       res.render('saldo-zero', { conto, data });
     } else {
       const salvadanai = await Promise.resolve(risparmiService.getSalvadanai(conto));
-      const salvadanaiNew = renderUtility.calcolaSalvadanai(salvadanai);
       console.log("Salvadanai ", salvadanai);
+      
+      const salvadanaiNew = renderUtility.calcolaSalvadanai(salvadanai);
       console.log("salvadanaiMap ", salvadanaiNew);
+      
+      const distribuzioni =  await Promise.resolve(distribuzioneService.getDistribuzioni(conto));
+      console.log("Distribuzioni ", distribuzioni);
 
-      res.render('situazione-attuale', { conto, data, salvadanai, salvadanaiNew });
+      res.render('situazione-attuale', { conto, data, salvadanai, salvadanaiNew, distribuzioni });
     }
 
   } catch (error) {

@@ -21,8 +21,8 @@ function addDistribuzione(conto, body) {
     }
     const oggi = new Date().toISOString().slice(0, 10);
     
+    const id = crypto.randomUUID()
     const righe = body.distribuzioni.map(d => {
-        const id = crypto.randomUUID()
         const salvadanaioId = d.salvadanaioId;
         const importo = d.importo;
         return `\n${id},${body.nome},${salvadanaioId},${importo},${oggi}`;
@@ -33,7 +33,29 @@ function addDistribuzione(conto, body) {
     fs.appendFileSync(file, righe, 'utf8');
 }
 
+async function getDistribuzioni(conto) {
+  const file = distribuzioneService.getDistribuzioniFile(conto);
+  const distribuzioni = await Promise.resolve(fileUtility.readCsvAsJson(file));
+  let result = {};
+  for (const distribuzione of distribuzioni) {
+    if (!result[distribuzione.id]) {
+      result[distribuzione.id] = {};
+      result[distribuzione.id].nome = distribuzione.nome;
+      result[distribuzione.id].salvadanai = [];
+
+    }
+
+    result[distribuzione.id].salvadanai.push({
+      "salvadanaioId": distribuzione.salvadanaioId,
+      "importo": distribuzione.importo
+    });
+  }
+  
+  return result;
+}
+
 export const distribuzioneService = {
     getDistribuzioniFile,
-    addDistribuzione
+    addDistribuzione,
+    getDistribuzioni
 };
