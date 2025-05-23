@@ -140,17 +140,20 @@ function getTotaleAccantonato() {
 }
 
 function applicaDistribuzione() {
-  inputs?.forEach(input => {
-    input.value = 0;
-  });
-  if (window.__DISTRIBUZIONI__[scegliDistribuzione.value]) {
-    window.__DISTRIBUZIONI__[scegliDistribuzione.value].salvadanai.forEach(sd => {
-      document.getElementById(sd.salvadanaioId).value = sd.importo;
+  if (scegliDistribuzione) {
+
+    inputs?.forEach(input => {
+      input.value = 0;
     });
-    salvaDistribuzioneBtn.disabled = true;
-    salvaDistribuzioneBtn.checked = false;
-    nomeDistribuzione.hidden = true;
-  } else {
-    salvaDistribuzioneBtn.disabled = false;
+    if (window.__DISTRIBUZIONI__[scegliDistribuzione.value]) {
+      window.__DISTRIBUZIONI__[scegliDistribuzione.value].salvadanai.forEach(sd => {
+        document.getElementById(sd.salvadanaioId).value = sd.importo;
+      });
+      salvaDistribuzioneBtn.disabled = true;
+      salvaDistribuzioneBtn.checked = false;
+      nomeDistribuzione.hidden = true;
+    } else {
+      salvaDistribuzioneBtn.disabled = false;
+    }
   }
 }
