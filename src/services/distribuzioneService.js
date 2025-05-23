@@ -46,7 +46,7 @@ async function getDistribuzioni(conto) {
     }
 
     result[distribuzione.id].salvadanai.push({
-      "salvadanaioId": distribuzione.salvadanaioId,
+      "salvadanaioId": distribuzione.salvadanaio_id,
       "importo": distribuzione.importo
     });
   }

@@ -109,7 +109,7 @@
               <% if (Object.keys(distribuzioni).length != 0) { %>
                 <div class="row">
                   Applica distribuzione
-                  <select>
+                  <select id="scegli-distribuzione">
                     <option value="" selected>Nessuna</option>
                     <%  Object.keys(distribuzioni).forEach((key, idx) => { %>
                       <option value="<%= key %>"><%= distribuzioni[key].nome %></option>
@@ -123,7 +123,7 @@
                 <% salvadanai.forEach((salvadanaio, idx) => { %>
                   <% if (typeof salvadanaio.obiettivo != 'number') { %>
                     <div class="input-field col">
-                      <input class="importo_da_accantonare" name="<%= salvadanaio.id %>" type="number" class="validate" value="0">
+                      <input class="importo_da_accantonare" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>" type="number" class="validate" value="0">
                       <label><%= salvadanaio.titolo %> (
                         <%= salvadanaio.saldo %>  €
                         <% if (typeof salvadanaio.obiettivo == 'number') { %>
@@ -138,7 +138,7 @@
                 <% salvadanai.forEach((salvadanaio, idx) => { %>
                   <% if (typeof salvadanaio.obiettivo == 'number' && salvadanaio.obiettivo > salvadanaio.saldo) { %>
                     <div class="input-field col">
-                      <input class="importo_da_accantonare" name="<%= salvadanaio.id %>" type="number" class="validate" value="0">
+                      <input class="importo_da_accantonare" id="<%= salvadanaio.id %>" name="<%= salvadanaio.id %>" type="number" class="validate" value="0">
                       <label><%= salvadanaio.titolo %> (
                         <%= salvadanaio.saldo %>  €
                         <% if (typeof salvadanaio.obiettivo == 'number') { %>
@@ -153,7 +153,7 @@
                 <% salvadanai.forEach((salvadanaio, idx) => { %>
                   <% if (typeof salvadanaio.obiettivo == 'number' && salvadanaio.obiettivo <= salvadanaio.saldo) { %>
                     <div class="input-field col">
-                      <input class="importo_da_accantonare" name="<%= salvadanaio.id %>" type="number" class="validate" value="0">
+                      <input class="importo_da_accantonare" id="<%= salvadanaio.id %>" name="<%= salvadanaio.id %>" type="number" class="validate" value="0">
                       <label><%= salvadanaio.titolo %> (
                         <%= salvadanaio.saldo %>  €
                         <% if (typeof salvadanaio.obiettivo == 'number') { %>

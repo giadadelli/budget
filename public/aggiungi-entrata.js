@@ -9,13 +9,6 @@ const inputs = document.querySelectorAll('.importo_da_accantonare');
 const totaleNonAccantonato = document.getElementById('totale_non_accantonato');
 const importoInput = document.getElementById('importo');
 
-const salvaDistribuzioneBtn = document.getElementById('salva-distribuzione');
-const nomeDistribuzione = document.getElementById('nome-distribuzione');
-nomeDistribuzione.hidden = !salvaDistribuzioneBtn.checked;
-salvaDistribuzioneBtn?.addEventListener('change', () => {
-  nomeDistribuzione.hidden = !salvaDistribuzioneBtn.checked;
-});
-
 inputs?.forEach(input => {
   input.value = 0;
   input.addEventListener('change', () => {
@@ -23,10 +16,23 @@ inputs?.forEach(input => {
   });
 });
 
+const salvaDistribuzioneBtn = document.getElementById('salva-distribuzione');
+const nomeDistribuzione = document.getElementById('nome-distribuzione');
+nomeDistribuzione.hidden = !salvaDistribuzioneBtn.checked;
+salvaDistribuzioneBtn?.addEventListener('change', () => {
+  nomeDistribuzione.hidden = !salvaDistribuzioneBtn.checked;
+});
+
+const scegliDistribuzione = document.getElementById("scegli-distribuzione");
+scegliDistribuzione?.addEventListener('change', () => {
+  applicaDistribuzione();
+});
+applicaDistribuzione();
+
+
 importoInput?.addEventListener('change', () => {
   updateTotaleNonAccantonato(); 
 });
-
 updateTotaleNonAccantonato();
 
 formEntrata?.addEventListener('submit', async (e) => {
@@ -131,4 +137,20 @@ function getTotaleAccantonato() {
     totaleAccantonatoValue += input.value? parseFloat(input.value) : 0;
   });
   return totaleAccantonatoValue;
+}
+
+function applicaDistribuzione() {
+  inputs?.forEach(input => {
+    input.value = 0;
+  });
+  if (window.__DISTRIBUZIONI__[scegliDistribuzione.value]) {
+    window.__DISTRIBUZIONI__[scegliDistribuzione.value].salvadanai.forEach(sd => {
+      document.getElementById(sd.salvadanaioId).value = sd.importo;
+    });
+    salvaDistribuzioneBtn.disabled = true;
+    salvaDistribuzioneBtn.checked = false;
+    nomeDistribuzione.hidden = true;
+  } else {
+    salvaDistribuzioneBtn.disabled = false;
+  }
 }
