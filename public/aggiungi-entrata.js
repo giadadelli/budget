@@ -61,7 +61,8 @@ formEntrata?.addEventListener('submit', async (e) => {
       let error = false;
       let distribuzioni = [];
       const daAccantonare = document.querySelectorAll('.importo_da_accantonare');
-      daAccantonare.forEach(async a => {
+      for(let i=0; i<daAccantonare.length; i++) {
+        let a = daAccantonare[i];
 
         if (parseFloat(a.value) > 0) {
 
@@ -86,7 +87,7 @@ formEntrata?.addEventListener('submit', async (e) => {
             alert('Errore durante il salvataggio');
           }
         }
-      });
+      }
 
       //Salvo la distribuzione
       if (salvaDistribuzioneBtn.checked && nomeDistribuzione.value) {
