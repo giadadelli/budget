@@ -40,6 +40,7 @@ async function getDistribuzioni(conto) {
     if (!result[distribuzione.id]) {
       result[distribuzione.id] = {};
       result[distribuzione.id].nome = distribuzione.nome;
+      result[distribuzione.id].tipo = distribuzione.tipo;
       result[distribuzione.id].salvadanai = [];
 
     }
