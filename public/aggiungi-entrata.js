@@ -1,6 +1,7 @@
 //Variabili che servono a tutti
 const importoInput = document.getElementById('importo');
-const inputs = document.querySelectorAll('.importo_da_accantonare');
+const inputs = document.querySelectorAll('.input-importi-esatti');
+const inputsPercentuale = document.querySelectorAll('.input-percentuale');
 const totaleNonAccantonato = document.getElementById('totale_non_accantonato');
 
 //Gestione dialog
@@ -14,6 +15,17 @@ document.getElementById('btn-chiudi-dialog-entrata')?.addEventListener('click', 
 const salvaDistribuzioneBtn = document.getElementById('salva-distribuzione');
 const nomeDistribuzione = document.getElementById('nome-distribuzione');
 const radios = document.querySelectorAll('input[type="radio"]');
+radios.forEach(r => {
+  r?.addEventListener('change', () => {
+    radios.forEach(radio => {
+      if (radio.checked) {
+        const isPercentuale = radio.value == 'percentuale';
+        inputsPercentuale.forEach(inputP => inputP.disabled = !isPercentuale);
+        inputs.forEach(input => input.disabled = isPercentuale);
+      }
+    });
+  });
+});
 
 nomeDistribuzione.hidden = !salvaDistribuzioneBtn.checked;
 salvaDistribuzioneBtn?.addEventListener('change', () => {
@@ -31,14 +43,20 @@ inputs?.forEach(input => {
   input.value = 0;
   input.addEventListener('change', () => {
     updateTotaleNonAccantonato(); 
+    updatePercentuali();
   });
 });
 
 //Aggiorna valore del totale non accantonato
 importoInput?.addEventListener('change', () => {
   updateTotaleNonAccantonato(); 
+  updatePercentuali();
 });
+
+//Inizializza form
 updateTotaleNonAccantonato();
+updatePercentuali();
+//TODO
 
 //Salva tutto
 const formEntrata = document.getElementById('form-entrata');
@@ -71,7 +89,7 @@ formEntrata?.addEventListener('submit', async (e) => {
       for(let i=0; i<daAccantonare.length; i++) {
         let a = daAccantonare[i];
 
-        if (parseFloat(a.value) > 0) {
+        if (!a.disabled && parseFloat(a.value) > 0) {
 
           distribuzioni.push({
             salvadanaioId: a.name,
@@ -133,7 +151,8 @@ formEntrata?.addEventListener('submit', async (e) => {
 
 //Utility
 function updateTotaleNonAccantonato() {
-  const val = (importoInput.value? parseFloat(importoInput.value) : 0) - getTotaleAccantonato();
+  const val = ((importoInput.value? parseFloat(importoInput.value) : 0) - getTotaleAccantonato());
+
   totaleNonAccantonato.innerHTML = val;
   const formEntrataSaveBtn = document.getElementById('form-entrata_save_btn');
   if (val < 0) {
@@ -143,6 +162,21 @@ function updateTotaleNonAccantonato() {
     formEntrataSaveBtn.disabled = false;
     totaleNonAccantonato.className = 'black-text';
   }
+}
+
+function updatePercentuali() {
+  inputs?.forEach(input => {
+    const p = (parseFloat(input.value) * 100 / parseFloat(importoInput.value)).toFixed(2);
+    document.getElementById(input.id + '-p').value = p;
+  });
+
+  
+  let valP = 100;
+  inputsPercentuale.forEach(i => {
+    valP = valP - parseFloat(i.value)
+
+  });
+  document.getElementById('totale_non_accantonato_p').innerHTML = ' (' + valP + '%)';
 }
 
 function getTotaleAccantonato() {
