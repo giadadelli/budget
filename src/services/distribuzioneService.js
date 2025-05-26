@@ -8,7 +8,7 @@ function getDistribuzioniFile(key) {
   const fileDistribuzioni = fileUtility.getFilePath(key, 'distribuzioni.csv');
   console.log("getDistribuzioniFile -> " + fileDistribuzioni);
   if (!existsSync(fileDistribuzioni)) {
-    const content = 'id,nome,salvadanaio_id,importo,inserito';
+    const content = 'id,nome,salvadanaio_id,importo,inserito,tipo';
     fs.writeFileSync(fileDistribuzioni, content);
     console.log("File distribuzioni.csv created");
   }
@@ -25,9 +25,8 @@ function addDistribuzione(conto, body) {
     const righe = body.distribuzioni.map(d => {
         const salvadanaioId = d.salvadanaioId;
         const importo = d.importo;
-        return `\n${id},${body.nome},${salvadanaioId},${importo},${oggi}`;
+        return `\n${id},${body.nome},${salvadanaioId},${importo},${oggi},${body.tipoDistribuzione}`;
       }).join('');
-    const riga = `\n${body.nome},${body.distribuzioni},${oggi}`;
 
     const file = distribuzioneService.getDistribuzioniFile(conto);
     fs.appendFileSync(file, righe, 'utf8');

@@ -1,23 +1,20 @@
+//Variabili che servono a tutti
+const importoInput = document.getElementById('importo');
+const inputs = document.querySelectorAll('.importo_da_accantonare');
+const totaleNonAccantonato = document.getElementById('totale_non_accantonato');
+
+//Gestione dialog
 const btnEntrata = document.getElementById('btn-apri-dialog-entrata');
 const dialogEntrata = document.getElementById('dialog-entrata');
 
 btnEntrata?.addEventListener('click', () => dialogEntrata.showModal());
 document.getElementById('btn-chiudi-dialog-entrata')?.addEventListener('click', () => dialogEntrata.close());
 
-const formEntrata = document.getElementById('form-entrata');
-const inputs = document.querySelectorAll('.importo_da_accantonare');
-const totaleNonAccantonato = document.getElementById('totale_non_accantonato');
-const importoInput = document.getElementById('importo');
-
-inputs?.forEach(input => {
-  input.value = 0;
-  input.addEventListener('change', () => {
-    updateTotaleNonAccantonato(); 
-  });
-});
-
+//Gestisci distribuzioni
 const salvaDistribuzioneBtn = document.getElementById('salva-distribuzione');
 const nomeDistribuzione = document.getElementById('nome-distribuzione');
+const radios = document.querySelectorAll('input[type="radio"]');
+
 nomeDistribuzione.hidden = !salvaDistribuzioneBtn.checked;
 salvaDistribuzioneBtn?.addEventListener('change', () => {
   nomeDistribuzione.hidden = !salvaDistribuzioneBtn.checked;
@@ -29,12 +26,22 @@ scegliDistribuzione?.addEventListener('change', () => {
 });
 applicaDistribuzione();
 
+//Inizializza gli input
+inputs?.forEach(input => {
+  input.value = 0;
+  input.addEventListener('change', () => {
+    updateTotaleNonAccantonato(); 
+  });
+});
 
+//Aggiorna valore del totale non accantonato
 importoInput?.addEventListener('change', () => {
   updateTotaleNonAccantonato(); 
 });
 updateTotaleNonAccantonato();
 
+//Salva tutto
+const formEntrata = document.getElementById('form-entrata');
 formEntrata?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const data = formEntrata.data_movimento.value;
@@ -91,12 +98,19 @@ formEntrata?.addEventListener('submit', async (e) => {
 
       //Salvo la distribuzione
       if (salvaDistribuzioneBtn.checked && nomeDistribuzione.value) {
+        let tipoDistribuzione = "importi-esatti";
+        radios?.forEach(radio => {
+          if (radio.checked) {
+            tipoDistribuzione = radio.value;
+          }
+        })
         const res = await fetch('/' + window.__CONTO__ + '/distribuzioni', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
               nome: nomeDistribuzione.value,
-              distribuzioni: distribuzioni
+              distribuzioni: distribuzioni,
+              tipoDistribuzione: tipoDistribuzione
             })
         });
       }
@@ -118,7 +132,6 @@ formEntrata?.addEventListener('submit', async (e) => {
 });
 
 //Utility
-
 function updateTotaleNonAccantonato() {
   const val = (importoInput.value? parseFloat(importoInput.value) : 0) - getTotaleAccantonato();
   totaleNonAccantonato.innerHTML = val;

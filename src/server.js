@@ -104,10 +104,10 @@ app.post('/:conto/accantonamenti', async (req, res) => {
 });
 
 //Aggiungi distribuzione
-app.post('/:conto/distribuzioni', async (req, res) => {
+app.post('/:conto/distribuzioni', (req, res) => {
   try {
     const conto = req.params.conto;
-    await distribuzioneService.addDistribuzione(conto, req.body);
+    distribuzioneService.addDistribuzione(conto, req.body);
     res.status(200).send('OK');
   } catch (err) {
     console.error('❌ Errore distribuzione:', err.message);
