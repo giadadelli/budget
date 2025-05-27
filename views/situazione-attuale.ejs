@@ -89,15 +89,15 @@
     <form id="form-entrata" method="dialog" class="flex flex-col gap-2">
       <div class="row">
         <div class="input-field col">
-          <input type="text" class="datepicker" name="data_movimento">
+          <input type="text" class="datepicker" name="data_movimento" class="validate" required>
           <label>Data</label>
         </div>
         <div class="input-field col">
-          <input type="number" class="validate" name="importo" id="importo">
+          <input type="number" class="validate" name="importo" id="importo" class="validate" placeholder="1000" required>
           <label>Importo</label>
         </div>
         <div class="input-field col">
-          <input type="text" class="validate" name="descrizione">
+          <input type="text" class="validate" name="descrizione" class="validate" placeholder="Es. Stipendio marzo">
           <label>Descrizione</label>
         </div>
       </div>
