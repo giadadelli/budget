@@ -91,7 +91,7 @@ async function getRisparmiTotalePerSalvadanaio(conto, salvadanaio) {
 
 async function addSalvadanaio(conto, {titolo, obiettivo, iniziale}) {
     if (!titolo) {
-      throw new Error('Nessuna spesa da salvare');
+      throw new Error('Nome del salvadanaio obligatorio');
     }
   
     obiettivo = obiettivo > 0 ? obiettivo : null;

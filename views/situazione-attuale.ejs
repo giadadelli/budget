@@ -56,6 +56,12 @@
   </div>
     
   <dialog id="dialog-uscita" style="height: auto;">
+    <div class="row">
+      <div class=""col>
+        <h4>Registra qui le tue spese</h4>
+        <h6>L'ultima spesa che hai registrato è del <%= data.ultimaSpesa %></h6>
+      </div>
+    </div>
     <form id="form-uscita" method="dialog" class="flex flex-col gap-2">
       <div id="rows-container">
         <!-- Popolato via js -->
@@ -83,15 +89,15 @@
     <form id="form-entrata" method="dialog" class="flex flex-col gap-2">
       <div class="row">
         <div class="input-field col">
-          <input type="text" class="datepicker" name="data_movimento">
+          <input type="text" class="datepicker" name="data_movimento" class="validate" required>
           <label>Data</label>
         </div>
         <div class="input-field col">
-          <input type="number" class="validate" name="importo" id="importo">
+          <input type="number" class="validate" name="importo" id="importo" class="validate" placeholder="1000" required>
           <label>Importo</label>
         </div>
         <div class="input-field col">
-          <input type="text" class="validate" name="descrizione">
+          <input type="text" class="validate" name="descrizione" class="validate" placeholder="Es. Stipendio marzo">
           <label>Descrizione</label>
         </div>
       </div>
@@ -212,25 +218,28 @@
   </dialog>  
 
   <dialog id="dialog-crea-salvadanaio" class="rounded-xl p-4 border shadow-lg" style="width: 600px;">
+    <div class="row">
+      <div class=""col>
+        <h4>Crea un salvadanaio</h4>
+      </div>
+    </div>
     <form id="form-salvadanaio" method="dialog" class="flex flex-col gap-4">
       <div class="flex flex-col gap-4", style="margin: 10px">
         <div class="row">
           <div class="input-field col s12">
-            <input id="titolo" type="text" class="validate">
-            <label>Nome</label>
+            <input id="titolo" type="text" class="validate" placeholder="Es. Vacanze" required>
+            <label>Nome del salvadanaio *</label>
           </div>
         </div>
-        <div class="divider"></div>
         <div class="row">
           <div class="input-field col s12">
-            <input id="iniziale" type="number" step="0.01" class="validate">
+            <input id="iniziale" type="number" step="0.01" placeholder="Inserisci l'importo iniziale che vuoi accantonare">
             <label>Importo iniziale</label>
           </div>
         </div>
-        <div class="divider"></div>
         <div class="row">
           <div class="input-field col s12">
-            <input id="obiettivo" type="number" step="0.01" class="validate">
+            <input id="obiettivo" type="number" step="0.01" placeholder="Stabilisci l'obiettivo per tenere traccia dei progressi">
             <label >Obiettivo</label>
           </div>
         </div>
@@ -288,7 +297,8 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       var elems = document.querySelectorAll('.datepicker');
-      var instances = M.Datepicker.init(elems, {autoClose: true, defaultDate: new Date(), format: "yyyy-mm-dd"});
+      const now = new Date();
+      var instances = M.Datepicker.init(elems, {autoClose: true, format: "yyyy-mm-dd"});
     });
 
     document.addEventListener('DOMContentLoaded', function() {

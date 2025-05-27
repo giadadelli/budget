@@ -83,31 +83,36 @@ function createNewLine() {
   wrapper.innerHTML = `
    
     <div class="input-field col">
-      <input type="text" class="datepicker" name="data_movimento" id="datepicker-${id}">
+      <input type="text" class="datepicker" name="data_movimento" id="datepicker-${id}" class="validate" required>
       <label>Data</label>
     </div>
     <div class="input-field col">
-      <input type="number" class="validate" step="0.01" name="importo">
-      <label>Importo</label>
+      <input type="number" class="validate" step="0.01" name="importo" id="importo-${id}" class="validate" required placeholder="10">
+      <label for="importo-${id}">Importo</label>
     </div>
     <div class="input-field col">
-      <input type="text" class="validate" name="descrizione">
-      <label>Descrizione</label>
+      <input type="text" class="validate" name="descrizione" id="descrizione-${id}" placeholder="Es. Bar">
+      <label for="descrizione-${id}">Descrizione</label>
     </div>
 
     
     <div class="input-field col">
-      <div>Seleziona il salvadanaio se vuoi che i soldi vengano prelevati da qui e non dalla tua disponibilità</div>
-      <select name="salvadanaio" data-id="${id}">
+      <select name="salvadanaio" data-id="${id}" >
         <option value="" selected>Nessun salvadanaio</option>
         ${window.__SALVADANAI__
           .map(c => `<option value="${c.id}">${c.titolo}</option>`)
           .join('')}
       </select>
     </div>
-    <a id="btn-rimuovi-spesa" class="waves-effect waves-light btn red"><i class="material-icons">delete</i></a>
+   
+    
     
   `;
+  if (rowsContainer.querySelectorAll('.riga-spesa').length > 0) {
+    wrapper.innerHTML += ` <div class="input-field col">
+        <a id="btn-rimuovi-spesa" class="waves-effect waves-light btn red"><i class="material-icons">delete</i></a>
+    </div>`
+  }
 
   wrapper.querySelector('#btn-rimuovi-spesa')?.addEventListener('click', () => {
     wrapper.remove();

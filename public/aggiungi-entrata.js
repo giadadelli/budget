@@ -81,7 +81,7 @@ formEntrata?.addEventListener('submit', async (e) => {
   const importo = parseFloat(formEntrata.importo.value);
   const descrizione = formEntrata.descrizione.value;
 
-  if (!data || isNaN(importo) || !descrizione) return;
+  if (!data || isNaN(importo)) return;
 
   try {
     const res = await fetch('/' + window.__CONTO__ + '/movimenti', {
@@ -92,7 +92,7 @@ formEntrata?.addEventListener('submit', async (e) => {
           importo: importo,
           categoria: null,
           sottocategoria: null,
-          descrizione: "Stipendio (" + descrizione + ")"
+          descrizione: descrizione
         })
     });
 
