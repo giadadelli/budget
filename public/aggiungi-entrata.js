@@ -92,7 +92,7 @@ formEntrata?.addEventListener('submit', async (e) => {
           importo: importo,
           categoria: null,
           sottocategoria: null,
-          descrizione: "Stipendio (" + descrizione + ")"
+          descrizione: descrizione
         })
     });
 

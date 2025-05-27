@@ -56,6 +56,7 @@ app.get('/:conto/situazione-attuale', async (req, res) => {
   try {
     const conto = req.params.conto;
     const data = await renderUtility.calcolaSituazione(conto);
+    console.log("Situazione Data ", data);
     if (data.saldo === 0) {
       res.render('saldo-zero', { conto, data });
     } else {

@@ -56,6 +56,12 @@
   </div>
     
   <dialog id="dialog-uscita" style="height: auto;">
+    <div class="row">
+      <div class=""col>
+        <h4>Registra qui le tue spese</h4>
+        <h6>L'ultima spesa che hai registrato è del <%= data.ultimaSpesa %></h6>
+      </div>
+    </div>
     <form id="form-uscita" method="dialog" class="flex flex-col gap-2">
       <div id="rows-container">
         <!-- Popolato via js -->
@@ -291,7 +297,8 @@
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       var elems = document.querySelectorAll('.datepicker');
-      var instances = M.Datepicker.init(elems, {autoClose: true, defaultDate: new Date(), format: "yyyy-mm-dd"});
+      const now = new Date();
+      var instances = M.Datepicker.init(elems, {autoClose: true, format: "yyyy-mm-dd"});
     });
 
     document.addEventListener('DOMContentLoaded', function() {

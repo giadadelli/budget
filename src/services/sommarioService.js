@@ -58,11 +58,18 @@ async function getUltimoAggiornamento(conto) {
     return result.length > 0 ? result[0].data : null;
 }
 
+async function getUltimaSpesa(conto) {
+    const all = await Promise.resolve(sommarioService.getAllMovimentiOrderByData(conto));
+    const spese = all.filter(r => r.importo < 0);
+    return spese.length > 0 ? spese[0].data : null;
+}
+
 export const sommarioService = {
     getRisparmiSpesi,
     getRisparmi,
     getSaldo,
     getDisponibilita,
     getAllMovimentiOrderByData,
-    getUltimoAggiornamento
+    getUltimoAggiornamento,
+    getUltimaSpesa
 };
