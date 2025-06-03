@@ -97,18 +97,26 @@ formEntrata?.addEventListener('submit', async (e) => {
     });
 
     if (res.ok) {
+      //Calcolo il tipo di distribuzione
+      let tipoDistribuzione = "importi-esatti";
+      radios?.forEach(radio => {
+        if (radio.checked) {
+          tipoDistribuzione = radio.value;
+        }
+      })
+      
       //Salvo gli accantonamenti
       let error = false;
       let distribuzioni = [];
-      const daAccantonare = document.querySelectorAll('.importo_da_accantonare');
+      const daAccantonare = document.querySelectorAll('.input-importi-esatti');
       for(let i=0; i<daAccantonare.length; i++) {
         let a = daAccantonare[i];
 
-        if (!a.disabled && parseFloat(a.value) > 0) {
+        if (parseFloat(a.value) > 0) {
 
           distribuzioni.push({
             salvadanaioId: a.name,
-            importo: a.value
+            importo: tipoDistribuzione == 'importi-esatti' ? a.value : document.getElementById(a.id + '-p').value
           });
 
           const res = await fetch('/' + window.__CONTO__ + '/accantonamenti', {
@@ -131,12 +139,7 @@ formEntrata?.addEventListener('submit', async (e) => {
 
       //Salvo la distribuzione
       if (salvaDistribuzioneBtn.checked && nomeDistribuzione.value) {
-        let tipoDistribuzione = "importi-esatti";
-        radios?.forEach(radio => {
-          if (radio.checked) {
-            tipoDistribuzione = radio.value;
-          }
-        })
+        
         const res = await fetch('/' + window.__CONTO__ + '/distribuzioni', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
