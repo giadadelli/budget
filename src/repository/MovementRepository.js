@@ -29,8 +29,14 @@ async function findAll(conto) {
     return result;
 }
 
+function save(conto, movements) {
+  const fileMovimenti = movementRepository._getMovimentiFile(conto);
+  fs.appendFileSync(fileMovimenti, movements, 'utf8');
+}
+
 
 export const movementRepository = {
     _getMovimentiFile,
-    findAll
+    findAll,
+    save
 };
