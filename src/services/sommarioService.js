@@ -42,8 +42,8 @@ async function getDisponibilita(conto) {
 
 async function getAllMovimentiOrderByData(conto) {
     let result = [];
-    const movimenti = await Promise.resolve(movimentiService.getMovimenti(conto));
-    result.push(...movimenti);
+    const movements = await Promise.resolve(movimentiService.getMovimenti(conto));
+    result.push(...movements);
 
     const speseDaRisparmi = await Promise.resolve(risparmiService.getSpese(conto));
     result.push(...speseDaRisparmi);

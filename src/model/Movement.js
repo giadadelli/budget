@@ -1,4 +1,4 @@
-export const MovementEntity = class {
+export const Movement = class {
     constructor(id, date, amount, description) {
       this.id = id;
       this.date = date;

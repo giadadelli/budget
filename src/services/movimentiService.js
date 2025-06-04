@@ -2,6 +2,7 @@ import fs from 'fs';
 import { existsSync } from 'node:fs';
 
 import {fileUtility} from './util/fileUtils.js'
+import { movementRepository } from '../repository/MovementRepository.js';
 
 function getMovimentiFile(key) {
   const fileMovimenti = fileUtility.getFilePath(key, 'movimenti.csv');
@@ -15,13 +16,14 @@ function getMovimentiFile(key) {
 }
 
 function getMovimenti(conto) {
-  return fileUtility.readCsv(movimentiService.getMovimentiFile(conto));
+  return movementRepository.findAll(conto);
+  //return fileUtility.readCsv(movimentiService.getMovimentiFile(conto));
 }
 
 async function getSaldo(conto) {
   const movimenti = await Promise.resolve(movimentiService.getMovimenti(conto));
   return movimenti.reduce(
-    (accumulator, currentValue) => accumulator + currentValue.importo,
+    (accumulator, currentValue) => accumulator + currentValue.amount,
     0,
   );
 }
