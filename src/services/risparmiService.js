@@ -1,22 +1,11 @@
 import fs from 'fs';
 import { existsSync } from 'node:fs';
-import csv from 'csvtojson'
 import crypto from 'crypto'
 
 import { fileUtility } from './util/fileUtils.js'
 
-function getRisparmiFile(key) {
-  const fileRisparmi = fileUtility.getFilePath(key, 'risparmi.csv');
-  console.log("getRisparmiFile -> " + fileRisparmi);
-
-  if (!existsSync(fileRisparmi)) {
-    const content = 'id,titolo,obiettivo,inserito,etichetta';
-    fs.writeFileSync(fileRisparmi, content);
-    console.log("File risparmi.csv created");
-  }
-
-  return fileRisparmi;
-}
+import { moneyBoxRepository } from '../repository/MoneyBoxRepository.js';
+import { moneyBoxConverter } from '../converter/MoneyBoxConverter.js';
 
 function getAccantonamentiFile(key) {
   const fileAccantonamenti = fileUtility.getFilePath(key, 'accantonamenti.csv');
@@ -32,44 +21,16 @@ function getAccantonamentiFile(key) {
 }
 
 async function getSalvadanai(conto) {
-    const fileRisparmi = risparmiService.getRisparmiFile(conto);
-    const result = await Promise.resolve(fileUtility.readCsvAsJson(fileRisparmi));
-    for (const element of result) {
-      const saldo = await Promise.resolve(risparmiService.getRisparmiTotalePerSalvadanaio(conto, element.titolo));
-      element.saldo = saldo;
-      element.obiettivo = element.obiettivo != "null" ? parseFloat(element.obiettivo) : null;
-      if (element.obiettivo) {
-        if (element.obiettivo <= element.saldo) {
-          element.obiettivo_raggiunto = true;
-        } else {
-          element.obiettivo_raggiunto = false;
-        }
-      } else {
-        element.obiettivo_raggiunto = false;
-      }
-      element.etichetta = element.etichetta === 'null' ? null : element.etichetta;
+    const result = [];
+    const moneyBoxEntities = await Promise.resolve(moneyBoxRepository.findAll(conto));
+    for (const moneyBoxEntity of moneyBoxEntities) {
+      const balance = await Promise.resolve(risparmiService.getRisparmiTotalePerSalvadanaio(conto, moneyBoxEntity.name)); //TODO va usato l'id del salvadanaio!!!
+      const moneyBox = await Promise.resolve(moneyBoxConverter.fromEntityToModel(moneyBoxEntity, balance));
+      result.push(moneyBox);
+      
     }
     
     return result;
-}
-
-async function getSalvadanaiCsv(conto) {
-  const fileRisparmi = risparmiService.getRisparmiFile(conto);
-  
-    return new Promise((resolve, reject) => {
-      const results = [];
-      fs.createReadStream(fileRisparmi)
-        .pipe(csv())
-        .on('data', (data) => {
-          const importo = parseFloat(data.importo);
-          if (!isNaN(importo)) {
-            results.push({ ...data, importo });
-          }
-        })
-        .on('end', () => resolve(results))
-        .on('error', reject);
-    });
-  
 }
 
 function getMovimenti(conto) {
@@ -94,20 +55,19 @@ async function addSalvadanaio(conto, {titolo, obiettivo, iniziale}) {
       throw new Error('Nome del salvadanaio obligatorio');
     }
   
-    obiettivo = obiettivo > 0 ? obiettivo : null;
-    const oggi = new Date().toISOString().slice(0, 10);
+    const target = obiettivo > 0 ? obiettivo : null;
+    const today = new Date().toISOString().slice(0, 10);
     //'id,titolo,obiettivo,inserito'
 
     let uuid = crypto.randomUUID();
-    const riga = `\n${uuid},${titolo},${obiettivo},${oggi},null`;
+    const row = `\n${uuid},${titolo},${target},${today},null`;
     
-    const fileRisparmi = risparmiService.getRisparmiFile(conto);
-    fs.appendFileSync(fileRisparmi, riga, 'utf8');
+    moneyBoxRepository.save(conto, row);
 
     if (iniziale && iniziale > 0) {
       //(conto, {data, importo, categoria, sottocategoria, descrizione })
       risparmiService.addMovimento(conto, {
-        data: oggi,
+        data: today,
         importo: iniziale,
         categoria: titolo,
         sottocategoria: null,
@@ -153,8 +113,6 @@ async function addMovimento(conto, {data, importo, categoria, sottocategoria, de
 export const risparmiService = {
     getSalvadanai,
     addSalvadanaio,
-    getSalvadanaiCsv,
-    getRisparmiFile,
     getAccantonamentiFile,
     getMovimenti,
     getSpese,

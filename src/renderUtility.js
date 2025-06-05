@@ -33,12 +33,12 @@ function calcolaSalvadanai(salvadanai) {
   let salvadanaiMap = {};
   salvadanai.forEach(sd => {
     if (sd.etichetta) {
-      if (!salvadanaiMap[sd.etichetta]) {
-        salvadanaiMap[sd.etichetta] = [];
+      if (!salvadanaiMap[sd.tag]) {
+        salvadanaiMap[sd.tag] = [];
       }
-      salvadanaiMap[sd.etichetta].push(sd);
+      salvadanaiMap[sd.tag].push(sd);
     } else {
-      salvadanaiMap[sd.titolo] = [sd];
+      salvadanaiMap[sd.name] = [sd];
     }
   });
 

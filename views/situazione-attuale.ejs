@@ -272,9 +272,9 @@
             <%  salvadanaiNew[key].forEach((salvadanaio, idx) => { %>
               <div class="row">
                 <div class="col">
-                  <%= salvadanaio.titolo %>: <%= salvadanaio.saldo %>  €
-                  <% if (typeof salvadanaio.obiettivo == 'number') { %>
-                    / <%= salvadanaio.obiettivo %> €
+                  <%= salvadanaio.name %>: <%= salvadanaio.balance %>  €
+                  <% if (salvadanaio.target != null) { %>
+                    / <%= salvadanaio.target %> €
                   <% } %> <!-- End if -->
                 </div>
               </div>
