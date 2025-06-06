@@ -100,8 +100,8 @@ function createNewLine() {
       <select name="salvadanaio" data-id="${id}" >
         <option value="" selected>Nessun salvadanaio</option>
         ${window.__SALVADANAI__.sort(
-          (p1, p2) => (p1.titolo < p2.titolo) ? -1 : (p1.titolo > p2.titolo) ? 1 : 0)
-          .map(c => `<option value="${c.id}">${c.titolo}</option>`)
+          (p1, p2) => (p1.name < p2.name) ? -1 : (p1.name > p2.name) ? 1 : 0)
+          .map(c => `<option value="${c.id}">${c.name}</option>`)
           .join('')}
       </select>
     </div>

@@ -80,7 +80,7 @@ async function addMovimentoNew(conto, {data, importo, salvadanaioId, descrizione
   const today = new Date().toISOString().slice(0, 10);
   const salvadanai = await Promise.resolve(risparmiService.getSalvadanai(conto));
   const salvadanaio = salvadanai.filter(s => s.id == salvadanaioId);
-  const categoria = salvadanaio[0].titolo; //TODO usare id
+  const categoria = salvadanaio[0].name; //TODO usare id
   
   // 1. Scrivi i movimenti
   const row = `\n${data},${importo},"${categoria}",null,"${descrizione}",${today}`;
