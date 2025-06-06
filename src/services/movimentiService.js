@@ -1,7 +1,17 @@
-import { movementRepository } from '../repository/MovementRepository.js';
+import { MovementRepository } from '../repository/MovementRepository.js';
+import { MovementConverter } from '../converter/MovementConverter.js';
 
-function getMovimenti(conto) {
-  return movementRepository.findAll(conto);
+async function getMovimenti(conto) {
+  const entities = await Promise.resolve(MovementRepository.findAll(conto));
+  const result = [];
+
+  for (let index = 0; index < entities.length; index++) {
+    const entity = entities[index];
+    const model = await Promise.resolve(MovementConverter.fromEntityToModel(entity));
+    result.push(model);
+  }
+
+  return result;
 }
 
 async function getSaldo(conto) {
@@ -25,7 +35,7 @@ async function addSpese(conto, spese) {
     return `\n${sp.data},-${sp.importo},${sp.categoria},${subcategory},"${description}",${today}`;
   }).join('');
   
-  movementRepository.save(conto, rows);
+  MovementRepository.save(conto, rows);
   
 }
 
@@ -37,7 +47,7 @@ async function addMovimento(conto, {data, importo, categoria, sottocategoria, de
   const today = new Date().toISOString().slice(0, 10);
   const row = `\n${data},${importo},${categoria},${sottocategoria},"${descrizione}",${today}`;
   
-  movementRepository.save(conto, row);
+  MovementRepository.save(conto, row);
 
 }
 

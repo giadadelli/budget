@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 
-import { allocationRepository } from '../repository/AllocationRepository.js'
+import { AllocationRepository } from '../repository/AllocationRepository.js'
 import { AllocationConverter } from '../converter/AllocationConverter.js'
 
 function addDistribuzione(conto, body) {
@@ -16,11 +16,11 @@ function addDistribuzione(conto, body) {
         return `\n${id},${body.nome},${salvadanaioId},${importo},${today},${body.tipoDistribuzione}`;
       }).join('');
 
-    allocationRepository.save(conto, rows);
+      AllocationRepository.save(conto, rows);
 }
 
 async function getDistribuzioni(conto) {
-  const allocationEntities = await Promise.resolve(allocationRepository.findAll(conto));
+  const allocationEntities = await Promise.resolve(AllocationRepository.findAll(conto));
   const result = [];
   for(var i=0; i<allocationEntities.length; i++) {
     const model = await Promise.resolve(AllocationConverter.fromEntityToModel(allocationEntities[i]));

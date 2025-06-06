@@ -26,9 +26,7 @@ async function findAll(conto) {
     const result = [];
     const movements = await Promise.resolve(fileUtility.readCsv(VirtualMovementRepository._getAccantonamentiFile(conto)));
     movements.forEach(element => {
-      //TODO data deve essere un new Date
-      //TODO importo deve essere un numero
-      result.push(new VirtualMovementEntity(element.id, element.data, element.importo, element.descrizione, element.categoria));//TODO non ho l'id e la moneyBox è la categoria (nome moneyBox non id!!!!)
+      result.push(new VirtualMovementEntity(element.id, new Date(element.data), element.importo, element.descrizione, element.categoria));//TODO non ho l'id e la moneyBox è la categoria (nome moneyBox non id!!!!)
     });
     return result;
 }

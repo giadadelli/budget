@@ -7,32 +7,32 @@ import {fileUtility} from '../services/util/fileUtils.js'
 import { AllocationEntity, MoneyBoxAllocationEntity } from '../entity/AllocationEntity.js'
 
 function _getDistribuzioniFile(key) {
-  const fileDistribuzioni = fileUtility.getFilePath(key, 'distribuzioni.csv');
-  console.log("getDistribuzioniFile -> " + fileDistribuzioni);
-  if (!existsSync(fileDistribuzioni)) {
+  const file = fileUtility.getFilePath(key, 'distribuzioni.csv');
+  console.log("getDistribuzioniFile -> " + file);
+  if (!existsSync(file)) {
     const content = 'id,nome,salvadanaio_id,importo,inserito,tipo';
-    fs.writeFileSync(fileDistribuzioni, content);
+    fs.writeFileSync(file, content);
     console.log("File distribuzioni.csv created");
   }
-  return fileDistribuzioni;
+  return file;
 }
 
 async function findAll(conto) {
-  const file = allocationRepository._getDistribuzioniFile(conto);
-  const distribuzioni = await Promise.resolve(fileUtility.readCsvAsJson(file));
+  const file = AllocationRepository._getDistribuzioniFile(conto);
+  const allocations = await Promise.resolve(fileUtility.readCsvAsJson(file));
   let result = {};
-  for (const distribuzione of distribuzioni) {
-    if (!result[distribuzione.id]) {
-      result[distribuzione.id] = {};
-      result[distribuzione.id].nome = distribuzione.nome;
-      result[distribuzione.id].tipo = distribuzione.tipo;
-      result[distribuzione.id].salvadanai = [];
+  for (const allocation of allocations) {
+    if (!result[allocation.id]) {
+      result[allocation.id] = {};
+      result[allocation.id].nome = allocation.nome;
+      result[allocation.id].tipo = allocation.tipo;
+      result[allocation.id].salvadanai = [];
 
     }
 
-    result[distribuzione.id].salvadanai.push({
-      "salvadanaioId": distribuzione.salvadanaio_id,
-      "importo": distribuzione.importo
+    result[allocation.id].salvadanai.push({
+      "salvadanaioId": allocation.salvadanaio_id,
+      "importo": allocation.importo
     });
   }
   
@@ -49,11 +49,11 @@ async function findAll(conto) {
 }
 
 async function save(conto, allocations) {
-  const file = allocationRepository._getDistribuzioniFile(conto);
+  const file = AllocationRepository._getDistribuzioniFile(conto);
   fs.appendFileSync(file, allocations, 'utf8');
 }
 
-export const allocationRepository = {
+export const AllocationRepository = {
   _getDistribuzioniFile,
     findAll,
     save

@@ -1,4 +1,3 @@
-//risparmi.csv
 export const MoneyBox = class {
     constructor(id, name, target, tag, balance) {
       this.id = id;

@@ -20,10 +20,10 @@ function _getRisparmiFile(key) {
 }
 
 async function findAll(conto) {
-    const fileRisparmi = moneyBoxRepository._getRisparmiFile(conto);
-    const moneyBoxes = await Promise.resolve(fileUtility.readCsvAsJson(fileRisparmi));
+    const file = MoneyBoxRepository._getRisparmiFile(conto);
+    const entities = await Promise.resolve(fileUtility.readCsvAsJson(file));
     const result = [];
-    for (const moneyBoxEntity of moneyBoxes) {
+    for (const moneyBoxEntity of entities) {
       const target = moneyBoxEntity.obiettivo != "null" ? parseFloat(moneyBoxEntity.obiettivo) : null;
       const tag = moneyBoxEntity.etichetta === 'null' ? null : moneyBoxEntity.etichetta;
       result.push(new MoneyBoxEntity(moneyBoxEntity.id, moneyBoxEntity.titolo, target, tag));
@@ -33,11 +33,11 @@ async function findAll(conto) {
 }
 
 async function save(conto, moneyBoxEntity) {
-  const fileRisparmi = moneyBoxRepository._getRisparmiFile(conto);
-  fs.appendFileSync(fileRisparmi, moneyBoxEntity, 'utf8');
+  const file = MoneyBoxRepository._getRisparmiFile(conto);
+  fs.appendFileSync(file, moneyBoxEntity, 'utf8');
 }
 
-export const moneyBoxRepository = {
+export const MoneyBoxRepository = {
     _getRisparmiFile,
     findAll,
     save

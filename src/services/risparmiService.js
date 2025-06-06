@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 
-import { moneyBoxRepository } from '../repository/MoneyBoxRepository.js';
-import { moneyBoxConverter } from '../converter/MoneyBoxConverter.js';
+import { MoneyBoxRepository } from '../repository/MoneyBoxRepository.js';
+import { MoneyBoxConverter } from '../converter/MoneyBoxConverter.js';
 
 import { VirtualMovementRepository } from '../repository/VirtualMovementRepository.js';
 import { VirtualMovementConverter } from '../converter/VirtualMovementConverter.js'
@@ -9,10 +9,10 @@ import { VirtualMovementConverter } from '../converter/VirtualMovementConverter.
 
 async function getSalvadanai(conto) {
     const result = [];
-    const moneyBoxEntities = await Promise.resolve(moneyBoxRepository.findAll(conto));
+    const moneyBoxEntities = await Promise.resolve(MoneyBoxRepository.findAll(conto));
     for (const moneyBoxEntity of moneyBoxEntities) {
       const balance = await Promise.resolve(risparmiService.getRisparmiTotalePerSalvadanaio(conto, moneyBoxEntity.name)); //TODO va usato l'id del salvadanaio!!!
-      const moneyBox = await Promise.resolve(moneyBoxConverter.fromEntityToModel(moneyBoxEntity, balance));
+      const moneyBox = await Promise.resolve(MoneyBoxConverter.fromEntityToModel(moneyBoxEntity, balance));
       result.push(moneyBox);
       
     }
@@ -57,7 +57,7 @@ async function addSalvadanaio(conto, {titolo, obiettivo, iniziale}) {
     let uuid = crypto.randomUUID();
     const row = `\n${uuid},${titolo},${target},${today},null`;
     
-    moneyBoxRepository.save(conto, row);
+    MoneyBoxRepository.save(conto, row);
 
     if (iniziale && iniziale > 0) {
       //(conto, {data, importo, categoria, sottocategoria, descrizione })

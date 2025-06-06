@@ -5,7 +5,7 @@ import { existsSync } from 'node:fs';
 
 import {fileUtility} from '../services/util/fileUtils.js'
 
-import { Movement } from "../model/Movement.js";
+import { MovementEntity } from "../entity/MovementEntity.js";
 
 function _getMovimentiFile(key) {
   const fileMovimenti = fileUtility.getFilePath(key, 'movimenti.csv');
@@ -20,22 +20,20 @@ function _getMovimentiFile(key) {
 
 async function findAll(conto) {
     const result = [];
-    const movements = await Promise.resolve(fileUtility.readCsv(movementRepository._getMovimentiFile(conto)));
+    const movements = await Promise.resolve(fileUtility.readCsv(MovementRepository._getMovimentiFile(conto)));
     movements.forEach(element => {
-      //TODO data deve essere un new Date
-      //TODO importo deve essere un numero
-        result.push(new Movement(element.id, element.data, element.importo, element.descrizione));
+      result.push(new MovementEntity(element.id, new Date(element.data), element.importo, element.descrizione));
     });
     return result;
 }
 
 function save(conto, movements) {
-  const fileMovimenti = movementRepository._getMovimentiFile(conto);
-  fs.appendFileSync(fileMovimenti, movements, 'utf8');
+  const file = MovementRepository._getMovimentiFile(conto);
+  fs.appendFileSync(file, movements, 'utf8');
 }
 
 
-export const movementRepository = {
+export const MovementRepository = {
     _getMovimentiFile,
     findAll,
     save

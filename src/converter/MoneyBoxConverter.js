@@ -6,6 +6,6 @@ async function fromEntityToModel(moneyBoxEntity, balance) {
 }
 
 
-export const moneyBoxConverter = {
+export const MoneyBoxConverter = {
     fromEntityToModel
 };
