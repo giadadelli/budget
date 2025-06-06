@@ -32,7 +32,7 @@ function calcolaSalvadanai(salvadanai) {
   //mappa -> id: etichetta, valore: array di salvadanai
   let salvadanaiMap = {};
   salvadanai.forEach(sd => {
-    if (sd.etichetta) {
+    if (sd.tag) {
       if (!salvadanaiMap[sd.tag]) {
         salvadanaiMap[sd.tag] = [];
       }

@@ -1,24 +1,11 @@
-import fs from 'fs';
-import { existsSync } from 'node:fs';
 import crypto from 'crypto'
-
-import { fileUtility } from './util/fileUtils.js'
 
 import { moneyBoxRepository } from '../repository/MoneyBoxRepository.js';
 import { moneyBoxConverter } from '../converter/MoneyBoxConverter.js';
 
-function getAccantonamentiFile(key) {
-  const fileAccantonamenti = fileUtility.getFilePath(key, 'accantonamenti.csv');
-  console.log("getAccantonamentiFile -> " + fileAccantonamenti);
+import { VirtualMovementRepository } from '../repository/VirtualMovementRepository.js';
+import { VirtualMovementConverter } from '../converter/VirtualMovementConverter.js'
 
-  if (!existsSync(fileAccantonamenti)) {
-    const content = 'data,importo,categoria,sottocategoria,descrizione,inserito';
-    fs.writeFileSync(fileAccantonamenti, content);
-    console.log("File accantonamenti.csv created");
-  }
-
-  return fileAccantonamenti;
-}
 
 async function getSalvadanai(conto) {
     const result = [];
@@ -33,8 +20,16 @@ async function getSalvadanai(conto) {
     return result;
 }
 
-function getMovimenti(conto) {
-  return fileUtility.readCsv(risparmiService.getAccantonamentiFile(conto));
+async function getMovimenti(conto) {
+  const entities = await Promise.resolve(VirtualMovementRepository.findAll(conto));
+  const result = [];
+  for (let index = 0; index < entities.length; index++) {
+    const entity = entities[index];
+    const model = await Promise.resolve(VirtualMovementConverter.fromEntityToModel(entity));
+    result.push(model);
+  }
+
+  return result;
 }
 
 async function getSpese(conto) {
@@ -44,8 +39,8 @@ async function getSpese(conto) {
 
 async function getRisparmiTotalePerSalvadanaio(conto, salvadanaio) {
   const movimenti = await Promise.resolve(risparmiService.getMovimenti(conto));
-  return movimenti.filter((m) => m.categoria == salvadanaio).reduce(
-    (accumulator, currentValue) => accumulator + currentValue.importo,
+  return movimenti.filter((m) => m.moneyBoxName == salvadanaio).reduce(
+    (accumulator, currentValue) => accumulator + currentValue.amount,
     0,
   );
 }
@@ -82,17 +77,15 @@ async function addMovimentoNew(conto, {data, importo, salvadanaioId, descrizione
     throw new Error('Dati non validi');
   }
 
-  const oggi = new Date().toISOString().slice(0, 10);
+  const today = new Date().toISOString().slice(0, 10);
   const salvadanai = await Promise.resolve(risparmiService.getSalvadanai(conto));
   const salvadanaio = salvadanai.filter(s => s.id == salvadanaioId);
   const categoria = salvadanaio[0].titolo; //TODO usare id
   
   // 1. Scrivi i movimenti
-  const riga = `\n${data},${importo},"${categoria}",null,"${descrizione}",${oggi}`;
+  const row = `\n${data},${importo},"${categoria}",null,"${descrizione}",${today}`;
   
-  const fileMovimenti = risparmiService.getAccantonamentiFile(conto);
-  fs.appendFileSync(fileMovimenti, riga, 'utf8');
-
+  VirtualMovementRepository.save(conto, row);
 }
 
 async function addMovimento(conto, {data, importo, categoria, sottocategoria, descrizione }) {
@@ -100,20 +93,18 @@ async function addMovimento(conto, {data, importo, categoria, sottocategoria, de
     throw new Error('Dati non validi');
   }
 
-  const oggi = new Date().toISOString().slice(0, 10);
+  const today = new Date().toISOString().slice(0, 10);
   
   // 1. Scrivi i movimenti
-  const riga = `\n${data},${importo},"${categoria}",${sottocategoria},"${descrizione}",${oggi}`;
+  const row = `\n${data},${importo},"${categoria}",${sottocategoria},"${descrizione}",${today}`;
   
-  const fileMovimenti = risparmiService.getAccantonamentiFile(conto);
-  fs.appendFileSync(fileMovimenti, riga, 'utf8');
+  VirtualMovementRepository.save(conto, row);
 
 }
 
 export const risparmiService = {
     getSalvadanai,
     addSalvadanaio,
-    getAccantonamentiFile,
     getMovimenti,
     getSpese,
     addMovimento,

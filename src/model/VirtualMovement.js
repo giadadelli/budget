@@ -1,4 +1,5 @@
-//accantonamenti.csv
+import { Movement } from "./Movement.js";
+
 export const VirtualMovement = class extends Movement {
     constructor(id, date, amount, description, moneyBoxName) {
       super(id, date, amount, description);
