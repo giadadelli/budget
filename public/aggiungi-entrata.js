@@ -214,17 +214,18 @@ function applicaDistribuzione() {
     inputsPercentuale?.forEach(input => {
       input.value = 0;
     });
-    if (window.__DISTRIBUZIONI__[scegliDistribuzione.value]) {
-      const selected = window.__DISTRIBUZIONI__[scegliDistribuzione.value];
-      if (selected.tipo == 'importi-esatti') {
-        selected.salvadanai.forEach(sd => {
-          document.getElementById(sd.salvadanaioId).value = sd.importo;
-          document.getElementById(sd.salvadanaioId + '-p').value = (parseFloat(sd.importo) * 100 / parseFloat(importoInput.value)).toFixed(2);
+    
+    if (window.__DISTRIBUZIONI__.filter(d => d.id == scegliDistribuzione.value).length == 1) {
+      const selected = window.__DISTRIBUZIONI__.filter(d => d.id == scegliDistribuzione.value)[0];
+      if (selected.type == 'importi-esatti') {
+        selected.moneyBoxAllocations.forEach(sd => {
+          document.getElementById(sd.moneyBoxId).value = sd.amount;
+          document.getElementById(sd.moneyBoxId + '-p').value = (sd.amount * 100 / parseFloat(importoInput.value)).toFixed(2);
         });
       } else {
-        selected.salvadanai.forEach(sd => {
-          document.getElementById(sd.salvadanaioId).value = parseFloat(importoInput.value) * sd.importo / 100;
-          document.getElementById(sd.salvadanaioId + '-p').value = sd.importo;
+        selected.moneyBoxAllocations.forEach(sd => {
+          document.getElementById(sd.moneyBoxId).value = (importoInput.value * sd.amount / 100).toFixed(2);//TODO l'ultimo va calcolato come differenza
+          document.getElementById(sd.moneyBoxId + '-p').value = sd.amount;
         });
       }
       salvaDistribuzioneBtn.disabled = true;
