@@ -18,6 +18,7 @@ async function calcolaSituazione(conto) {
     const avanzo = await Promise.resolve(sommarioService.getDisponibilita(conto));
     const ultimoAggiornamento = await Promise.resolve(sommarioService.getUltimoAggiornamento(conto));
     const ultimaSpesa = await Promise.resolve(sommarioService.getUltimaSpesa(conto));
+    
     return {
       saldo,
       avanzo,

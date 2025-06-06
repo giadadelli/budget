@@ -49,7 +49,7 @@
         <tbody>
           <%  movimenti.forEach((movimento, idx) => { %>
             <tr>
-              <td><%= movimento.date %></td>
+              <td><%= movimento.date.toLocaleString('it-IT', { year:"numeric", month:"long", day:"numeric"}); %></td>
               <td><%= movimento.amount %></td>
               <td><%= movimento.description %></td>
               <td>TODO salvadanaio</td>
