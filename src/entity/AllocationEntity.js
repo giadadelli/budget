@@ -1,11 +1,16 @@
-//distribuzioni.csv
+export const MoneyBoxAllocationEntity = class {
+  constructor(moneyBoxId, amount) {
+    this.moneyBoxId = moneyBoxId;
+    this.amount = amount;
+  }
+}
+
 export const AllocationEntity = class {
-    constructor(id, name, moneyBoxId, amount, type) {
+    constructor(id, name, type, moneyBoxAllocations) {
       this.id = id;
       this.name = name;
-      this.moneyBoxId = moneyBoxId;
-      this.amount = amount;
       this.type = type;
+      this.moneyBoxAllocations = moneyBoxAllocations;
     }
   }
   
