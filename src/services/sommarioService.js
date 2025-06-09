@@ -1,6 +1,7 @@
 import { movimentiService } from './movimentiService.js';
 import { risparmiService } from './risparmiService.js';
 import { dateUtility } from './util/dateUtils.js';
+import { numberUtility } from './util/numberUtils.js';
 
 async function getRisparmiSpesi(conto) {
     //somma di tutti gli accantonamenti negativi
@@ -8,7 +9,7 @@ async function getRisparmiSpesi(conto) {
     return movimenti
     .filter(currentValue => currentValue.amount < 0)
     .reduce(
-        (accumulator, currentValue) => accumulator + Math.abs(currentValue.amount),
+        (accumulator, currentValue) => numberUtility.sum(accumulator, Math.abs(currentValue.amount)),
         0,
     );
 }
@@ -19,7 +20,7 @@ async function getRisparmi(conto) {
     return movimenti
     .filter(currentValue => currentValue.amount > 0)
     .reduce(
-        (accumulator, currentValue) => accumulator + currentValue.amount,
+        (accumulator, currentValue) => numberUtility.sum(accumulator, currentValue.amount),
         0,
     );
 }
@@ -37,7 +38,7 @@ async function getDisponibilita(conto) {
     const movimenti = await Promise.resolve(movimentiService.getSaldo(conto));
     const risparmi = await Promise.resolve(sommarioService.getRisparmi(conto));
 
-    return movimenti - risparmi;
+    return numberUtility.sum(movimenti, -risparmi);
 }
 
 async function getAllMovimentiOrderByData(conto) {

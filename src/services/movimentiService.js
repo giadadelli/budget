@@ -1,6 +1,8 @@
 import { MovementRepository } from '../repository/MovementRepository.js';
 import { MovementConverter } from '../converter/MovementConverter.js';
 
+import { numberUtility } from './util/numberUtils.js';
+
 async function getMovimenti(conto) {
   const entities = await Promise.resolve(MovementRepository.findAll(conto));
   const result = [];
@@ -17,7 +19,7 @@ async function getMovimenti(conto) {
 async function getSaldo(conto) {
   const movements = await Promise.resolve(movimentiService.getMovimenti(conto));
   return movements.reduce(
-    (accumulator, currentValue) => accumulator + currentValue.amount,
+    (accumulator, currentValue) => numberUtility.sum(accumulator, currentValue.amount),
     0,
   );
 }

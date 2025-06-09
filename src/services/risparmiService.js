@@ -1,5 +1,7 @@
 import crypto from 'crypto'
 
+import { numberUtility } from './util/numberUtils.js';
+
 import { MoneyBoxRepository } from '../repository/MoneyBoxRepository.js';
 import { MoneyBoxConverter } from '../converter/MoneyBoxConverter.js';
 
@@ -40,7 +42,7 @@ async function getSpese(conto) {
 async function getRisparmiTotalePerSalvadanaio(conto, salvadanaio) {
   const movimenti = await Promise.resolve(risparmiService.getMovimenti(conto));
   return movimenti.filter((m) => m.moneyBoxName == salvadanaio).reduce(
-    (accumulator, currentValue) => accumulator + currentValue.amount,
+    (accumulator, currentValue) => numberUtility.sum(accumulator, currentValue.amount),
     0,
   );
 }
