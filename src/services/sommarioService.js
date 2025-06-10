@@ -30,7 +30,7 @@ async function getSaldo(conto) {
     const movimenti = await Promise.resolve(movimentiService.getSaldo(conto));
     const risparmiSpesi = await Promise.resolve(sommarioService.getRisparmiSpesi(conto));
 
-    return movimenti - risparmiSpesi;
+    return numberUtility.sum(movimenti, -risparmiSpesi);
 }
 
 async function getDisponibilita(conto) {
