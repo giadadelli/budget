@@ -131,8 +131,8 @@
                 <% salvadanai.forEach((salvadanaio, idx) => { %>
                   <% if (salvadanaio.target == null) { %>
                     <div class="input-field col s3">
-                      <input class="importo_da_accantonare input-importi-esatti" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>" type="number" class="validate" value="0">
-                      <input class="importo_da_accantonare input-percentuale" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>-p" type="number" disabled class="validate" value="0">
+                      <input class="importo_da_accantonare input-importi-esatti" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>" type="number" class="validate" value="0" step="0.01">
+                      <input class="importo_da_accantonare input-percentuale" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>-p" type="number" disabled class="validate" value="0" step="0.01">
                       <label><%= salvadanaio.name %> (
                         <%= salvadanaio.balance %>  €
                       )</label>
@@ -144,8 +144,8 @@
                 <% salvadanai.forEach((salvadanaio, idx) => { %>
                   <% if (salvadanaio.target != null && salvadanaio.target > salvadanaio.balance) { %>
                     <div class="input-field col s4">
-                      <input class="importo_da_accantonare input-importi-esatti" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>" type="number" class="validate" value="0">
-                      <input class="importo_da_accantonare input-percentuale" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>-p" type="number" disabled class="validate" value="0">
+                      <input class="importo_da_accantonare input-importi-esatti" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>" type="number" class="validate" value="0" step="0.01">
+                      <input class="importo_da_accantonare input-percentuale" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>-p" type="number" disabled class="validate" value="0" step="0.01">
                       <label><%= salvadanaio.name %> (
                         <%= salvadanaio.balance %>  € / <%= salvadanaio.target %> €
                       )</label>
@@ -157,8 +157,8 @@
                 <% salvadanai.forEach((salvadanaio, idx) => { %>
                   <% if (salvadanaio.target != null && salvadanaio.target <= salvadanaio.balance) { %>
                     <div class="input-field col s4">
-                      <input class="importo_da_accantonare input-importi-esatti" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>" type="number" class="validate" value="0">
-                      <input class="importo_da_accantonare input-percentuale" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>-p" type="number" disabled class="validate" value="0">
+                      <input class="importo_da_accantonare input-importi-esatti" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>" type="number" class="validate" value="0" step="0.01">
+                      <input class="importo_da_accantonare input-percentuale" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>-p" type="number" disabled class="validate" value="0" step="0.01">
                       <label><%= salvadanaio.name %> (
                         <%= salvadanaio.balance %>  € / <%= salvadanaio.target %> €
                       )</label>
