@@ -7,7 +7,10 @@ createNewLine();
 const aggiungiUscitaRiga = document.getElementById("aggiungi-uscita-riga");
 aggiungiUscitaRiga?.addEventListener('click', () => createNewLine());
 
-btnUscita?.addEventListener('click', () => dialogUscita.showModal());
+btnUscita?.addEventListener('click', () => {
+  initFormUscite();
+  dialogUscita.showModal();
+});
 document.getElementById('btn-chiudi-dialog-uscita')?.addEventListener('click', () => dialogUscita.close());
 
 formUscita?.addEventListener('submit', async (e) => {
@@ -72,6 +75,12 @@ formUscita?.addEventListener('submit', async (e) => {
   });
   
 });
+
+function initFormUscite() {
+  document.getElementById('rows-container').innerHTML = null;
+  createNewLine();
+
+}
 
 //Utility
 function createNewLine() {

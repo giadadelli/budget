@@ -13,31 +13,12 @@ const radios = document.querySelectorAll('input[type="radio"]');
 const btnEntrata = document.getElementById('btn-apri-dialog-entrata');
 const dialogEntrata = document.getElementById('dialog-entrata');
 
-btnEntrata?.addEventListener('click', () => dialogEntrata.showModal());
+btnEntrata?.addEventListener('click', () => {
+  initForm();
+  dialogEntrata.showModal();
+});
 document.getElementById('btn-chiudi-dialog-entrata')?.addEventListener('click', () => dialogEntrata.close());
 //Fine gestione dialog
-
-
-
-//Inizializza form
-salvaDistribuzioneBtn.checked = false;
-nomeDistribuzione.hidden = true;
-tipoDistribuzione.hidden = true;
-updateTotaleNonAccantonato();
-
-inputsImportiEsatti?.forEach(input => {
-  input.value = 0;
-});
-inputsPercentuale?.forEach(input => {
-  input.value = 0;
-  input.disabled = true;
-});
-document.querySelectorAll('#scegli-distribuzione option').forEach(o => {
-  o.selected = o.value === ""
-});
-document.querySelectorAll('input[value="importi-esatti"]')[0].checked = true
-updateTotaleNonAccantonato();
-//Fine inizializzazione form
 
 
 //Listener
@@ -177,6 +158,30 @@ formEntrata?.addEventListener('submit', async (e) => {
 });
 
 //Utility
+
+function initForm() {
+  importoInput.value = 0;
+  document.getElementById("descrizione_entrata").value = null;
+  document.getElementById("data_entrata").value = null;
+  salvaDistribuzioneBtn.checked = false;
+  nomeDistribuzione.hidden = true;
+  tipoDistribuzione.hidden = true;
+  updateTotaleNonAccantonato();
+
+  inputsImportiEsatti?.forEach(input => {
+    input.value = 0;
+  });
+  inputsPercentuale?.forEach(input => {
+    input.value = 0;
+    input.disabled = true;
+  });
+  document.querySelectorAll('#scegli-distribuzione option').forEach(o => {
+    o.selected = o.value === ""
+  });
+  document.querySelectorAll('input[value="importi-esatti"]')[0].checked = true
+  updateTotaleNonAccantonato();
+}
+
 function updateTotaleNonAccantonato() {
   const val = ((importoInput.value? parseFloat(importoInput.value) : 0) - getTotaleAccantonato());
 
@@ -202,7 +207,7 @@ function updateImportiEsatti() {
   inputsPercentuale?.forEach(input => {
     
     const p = importoInput.value * input.value / 100;
-    document.getElementById(input.id.substring(0, input.id.indexOf('-p'))).value = p;
+    document.getElementById(input.id.substring(0, input.id.indexOf('-p'))).value = p.toFixed(2);
   });
 }
 
