@@ -1,0 +1,4 @@
+salvadanaio (vecchio risparmi)          money box
+movimenti                               movements
+distribuzioni                           allocation
+accantonamenti                          virtual-moments (tanto verrà eliminato)

@@ -1,27 +1,25 @@
-import fs from 'fs';
-import { existsSync } from 'node:fs';
+import { MovementRepository } from '../repository/MovementRepository.js';
+import { MovementConverter } from '../converter/MovementConverter.js';
 
-import {fileUtility} from './util/fileUtils.js'
+import { numberUtility } from './util/numberUtils.js';
 
-function getMovimentiFile(key) {
-  const fileMovimenti = fileUtility.getFilePath(key, 'movimenti.csv');
-  console.log("getMovimentiFile -> " + fileMovimenti);
-  if (!existsSync(fileMovimenti)) {
-    const content = 'data,importo,categoria,sottocategoria,descrizione,inserito';
-    fs.writeFileSync(fileMovimenti, content);
-    console.log("File movimenti.csv created");
+async function getMovimenti(conto) {
+  const entities = await Promise.resolve(MovementRepository.findAll(conto));
+  const result = [];
+
+  for (let index = 0; index < entities.length; index++) {
+    const entity = entities[index];
+    const model = await Promise.resolve(MovementConverter.fromEntityToModel(entity));
+    result.push(model);
   }
-  return fileMovimenti;
-}
 
-function getMovimenti(conto) {
-  return fileUtility.readCsv(movimentiService.getMovimentiFile(conto));
+  return result;
 }
 
 async function getSaldo(conto) {
-  const movimenti = await Promise.resolve(movimentiService.getMovimenti(conto));
-  return movimenti.reduce(
-    (accumulator, currentValue) => accumulator + currentValue.importo,
+  const movements = await Promise.resolve(movimentiService.getMovimenti(conto));
+  return movements.reduce(
+    (accumulator, currentValue) => numberUtility.sum(accumulator, currentValue.amount),
     0,
   );
 }
@@ -31,16 +29,16 @@ async function addSpese(conto, spese) {
     throw new Error('Nessuna spesa da salvare');
   }
 
-  const oggi = new Date().toISOString().slice(0, 10);
+  const today = new Date().toISOString().slice(0, 10);
   
-  const righe = spese.map(sp => {
-    const descrizione = sp.descrizione.replace(/"/g, '""');
-    const sottocategoria = sp.sottocategoria ?? 'null';
-    return `\n${sp.data},-${sp.importo},${sp.categoria},${sottocategoria},"${descrizione}",${oggi}`;
+  const rows = spese.map(sp => {
+    const description = sp.descrizione.replace(/"/g, '""');
+    const subcategory = sp.sottocategoria ?? 'null';
+    return `\n${sp.data},-${sp.importo},${sp.categoria},${subcategory},"${description}",${today}`;
   }).join('');
   
-  const fileMovimenti = movimentiService.getMovimentiFile(conto);
-  fs.appendFileSync(fileMovimenti, righe, 'utf8');
+  MovementRepository.save(conto, rows);
+  
 }
 
 async function addMovimento(conto, {data, importo, categoria, sottocategoria, descrizione }) {
@@ -48,39 +46,16 @@ async function addMovimento(conto, {data, importo, categoria, sottocategoria, de
     throw new Error('Dati non validi');
   }
 
-  const oggi = new Date().toISOString().slice(0, 10);
+  const today = new Date().toISOString().slice(0, 10);
+  const row = `\n${data},${importo},${categoria},${sottocategoria},"${descrizione}",${today}`;
   
-  // 1. Scrivi i movimenti
-  const riga = `\n${data},${importo},${categoria},${sottocategoria},"${descrizione}",${oggi}`;
-  
-  const fileMovimenti = movimentiService.getMovimentiFile(conto);
-  fs.appendFileSync(fileMovimenti, riga, 'utf8');
-
-}
-
-async function addEntrate(conto, {movimenti, incremento, data }) {
-  if (!Array.isArray(movimenti) || movimenti.length === 0 || isNaN(incremento) || !data) {
-    throw new Error('Dati non validi');
-  }
-
-  const oggi = new Date().toISOString().slice(0, 10);
-  
-  // 1. Scrivi i movimenti
-  const righe = movimenti.map(m => {
-    const descrizione = m.descrizione.replace(/"/g, '""');
-    return `\n${m.data},${m.importo},${m.categoria},null,"${descrizione}",${oggi}`;
-  }).join('');
-  
-  const fileMovimenti = movimentiService.getMovimentiFile(conto);
-  fs.appendFileSync(fileMovimenti, righe, 'utf8');
+  MovementRepository.save(conto, row);
 
 }
 
 export const movimentiService = {
     addSpese,
-    addEntrate,
     getMovimenti,
     addMovimento,
-    getSaldo,
-    getMovimentiFile
+    getSaldo
 };

@@ -7,7 +7,10 @@ createNewLine();
 const aggiungiUscitaRiga = document.getElementById("aggiungi-uscita-riga");
 aggiungiUscitaRiga?.addEventListener('click', () => createNewLine());
 
-btnUscita?.addEventListener('click', () => dialogUscita.showModal());
+btnUscita?.addEventListener('click', () => {
+  initFormUscite();
+  dialogUscita.showModal();
+});
 document.getElementById('btn-chiudi-dialog-uscita')?.addEventListener('click', () => dialogUscita.close());
 
 formUscita?.addEventListener('submit', async (e) => {
@@ -73,6 +76,12 @@ formUscita?.addEventListener('submit', async (e) => {
   
 });
 
+function initFormUscite() {
+  document.getElementById('rows-container').innerHTML = null;
+  createNewLine();
+
+}
+
 //Utility
 function createNewLine() {
   const wrapper = document.createElement('div');
@@ -100,8 +109,8 @@ function createNewLine() {
       <select name="salvadanaio" data-id="${id}" >
         <option value="" selected>Nessun salvadanaio</option>
         ${window.__SALVADANAI__.sort(
-          (p1, p2) => (p1.titolo < p2.titolo) ? -1 : (p1.titolo > p2.titolo) ? 1 : 0)
-          .map(c => `<option value="${c.id}">${c.titolo}</option>`)
+          (p1, p2) => (p1.name < p2.name) ? -1 : (p1.name > p2.name) ? 1 : 0)
+          .map(c => `<option value="${c.id}">${c.name}</option>`)
           .join('')}
       </select>
     </div>

@@ -1,6 +1,6 @@
 //Variabili che servono a tutti
 const importoInput = document.getElementById('importo');
-const inputs = document.querySelectorAll('.input-importi-esatti');
+const inputsImportiEsatti = document.querySelectorAll('.input-importi-esatti');
 const inputsPercentuale = document.querySelectorAll('.input-percentuale');
 const totaleNonAccantonato = document.getElementById('totale_non_accantonato');
 const scegliDistribuzione = document.getElementById("scegli-distribuzione");
@@ -13,35 +13,18 @@ const radios = document.querySelectorAll('input[type="radio"]');
 const btnEntrata = document.getElementById('btn-apri-dialog-entrata');
 const dialogEntrata = document.getElementById('dialog-entrata');
 
-btnEntrata?.addEventListener('click', () => dialogEntrata.showModal());
+btnEntrata?.addEventListener('click', () => {
+  initForm();
+  dialogEntrata.showModal();
+});
 document.getElementById('btn-chiudi-dialog-entrata')?.addEventListener('click', () => dialogEntrata.close());
 //Fine gestione dialog
-
-
-
-//Inizializza form
-salvaDistribuzioneBtn.checked = false;
-nomeDistribuzione.hidden = true;
-tipoDistribuzione.hidden = true;
-updateTotaleNonAccantonato();
-//applicaDistribuzione();
-inputs?.forEach(input => {
-  input.value = 0;
-});
-inputsPercentuale?.forEach(input => {
-  input.value = 0;
-  input.disabled = true;
-});
-document.querySelectorAll('#scegli-distribuzione option').forEach(o => {
-  o.selected = o.value === ""
-});
-document.querySelectorAll('input[value="importi-esatti"]')[0].checked = true
-//Fine inizializzazione form
 
 
 //Listener
 scegliDistribuzione?.addEventListener('change', () => {
   applicaDistribuzione();
+  updateTotaleNonAccantonato();
 });
 
 salvaDistribuzioneBtn?.addEventListener('change', () => {
@@ -49,10 +32,17 @@ salvaDistribuzioneBtn?.addEventListener('change', () => {
   tipoDistribuzione.hidden = !salvaDistribuzioneBtn.checked;
 });
 
-inputs?.forEach(input => {
+inputsPercentuale?.forEach(input => {
   input.addEventListener('change', () => {
+    updateImportiEsatti();
     updateTotaleNonAccantonato(); 
+  });
+});
+
+inputsImportiEsatti?.forEach(input => {
+  input.addEventListener('change', () => {
     updatePercentuali();
+    updateTotaleNonAccantonato(); 
   });
 });
 
@@ -67,7 +57,7 @@ radios.forEach(r => {
       if (radio.checked) {
         const isPercentuale = radio.value == 'percentuale';
         inputsPercentuale.forEach(inputP => inputP.disabled = !isPercentuale);
-        inputs.forEach(input => input.disabled = isPercentuale);
+        inputsImportiEsatti.forEach(input => input.disabled = isPercentuale);
       }
     });
   });
@@ -168,6 +158,30 @@ formEntrata?.addEventListener('submit', async (e) => {
 });
 
 //Utility
+
+function initForm() {
+  importoInput.value = 0;
+  document.getElementById("descrizione_entrata").value = null;
+  document.getElementById("data_entrata").value = null;
+  salvaDistribuzioneBtn.checked = false;
+  nomeDistribuzione.hidden = true;
+  tipoDistribuzione.hidden = true;
+  updateTotaleNonAccantonato();
+
+  inputsImportiEsatti?.forEach(input => {
+    input.value = 0;
+  });
+  inputsPercentuale?.forEach(input => {
+    input.value = 0;
+    input.disabled = true;
+  });
+  document.querySelectorAll('#scegli-distribuzione option').forEach(o => {
+    o.selected = o.value === ""
+  });
+  document.querySelectorAll('input[value="importi-esatti"]')[0].checked = true
+  updateTotaleNonAccantonato();
+}
+
 function updateTotaleNonAccantonato() {
   const val = ((importoInput.value? parseFloat(importoInput.value) : 0) - getTotaleAccantonato());
 
@@ -180,15 +194,7 @@ function updateTotaleNonAccantonato() {
     formEntrataSaveBtn.disabled = false;
     totaleNonAccantonato.className = 'black-text';
   }
-}
 
-function updatePercentuali() {
-  inputs?.forEach(input => {
-    const p = (parseFloat(input.value) * 100 / parseFloat(importoInput.value)).toFixed(2);
-    document.getElementById(input.id + '-p').value = p;
-  });
-
-  
   let valP = 100;
   inputsPercentuale.forEach(i => {
     valP = valP - parseFloat(i.value)
@@ -197,9 +203,24 @@ function updatePercentuali() {
   document.getElementById('totale_non_accantonato_p').innerHTML = ' (' + valP + '%)';
 }
 
+function updateImportiEsatti() {
+  inputsPercentuale?.forEach(input => {
+    
+    const p = importoInput.value * input.value / 100;
+    document.getElementById(input.id.substring(0, input.id.indexOf('-p'))).value = p.toFixed(2);
+  });
+}
+
+function updatePercentuali() {
+  inputsImportiEsatti?.forEach(input => {
+    const p = (parseFloat(input.value) * 100 / parseFloat(importoInput.value)).toFixed(2);
+    document.getElementById(input.id + '-p').value = p;
+  });
+}
+
 function getTotaleAccantonato() {
   let totaleAccantonatoValue = 0;
-  inputs?.forEach(input => {
+  inputsImportiEsatti?.forEach(input => {
     totaleAccantonatoValue += input.value? parseFloat(input.value) : 0;
   });
   return totaleAccantonatoValue;
@@ -208,23 +229,24 @@ function getTotaleAccantonato() {
 function applicaDistribuzione() {
   if (scegliDistribuzione) {
 
-    inputs?.forEach(input => {
+    inputsImportiEsatti?.forEach(input => {
       input.value = 0;
     });
     inputsPercentuale?.forEach(input => {
       input.value = 0;
     });
-    if (window.__DISTRIBUZIONI__[scegliDistribuzione.value]) {
-      const selected = window.__DISTRIBUZIONI__[scegliDistribuzione.value];
-      if (selected.tipo == 'importi-esatti') {
-        selected.salvadanai.forEach(sd => {
-          document.getElementById(sd.salvadanaioId).value = sd.importo;
-          document.getElementById(sd.salvadanaioId + '-p').value = (parseFloat(sd.importo) * 100 / parseFloat(importoInput.value)).toFixed(2);
+    
+    if (window.__DISTRIBUZIONI__.filter(d => d.id == scegliDistribuzione.value).length == 1) {
+      const selected = window.__DISTRIBUZIONI__.filter(d => d.id == scegliDistribuzione.value)[0];
+      if (selected.type == 'importi-esatti') {
+        selected.moneyBoxAllocations.forEach(sd => {
+          document.getElementById(sd.moneyBoxId).value = sd.amount;
+          document.getElementById(sd.moneyBoxId + '-p').value = (sd.amount * 100 / parseFloat(importoInput.value)).toFixed(2);
         });
       } else {
-        selected.salvadanai.forEach(sd => {
-          document.getElementById(sd.salvadanaioId).value = parseFloat(importoInput.value) * sd.importo / 100;
-          document.getElementById(sd.salvadanaioId + '-p').value = sd.importo;
+        selected.moneyBoxAllocations.forEach(sd => {
+          document.getElementById(sd.moneyBoxId).value = (importoInput.value * sd.amount / 100).toFixed(2);//TODO l'ultimo va calcolato come differenza
+          document.getElementById(sd.moneyBoxId + '-p').value = sd.amount;
         });
       }
       salvaDistribuzioneBtn.disabled = true;

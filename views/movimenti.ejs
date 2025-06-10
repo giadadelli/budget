@@ -49,9 +49,10 @@
         <tbody>
           <%  movimenti.forEach((movimento, idx) => { %>
             <tr>
-              <td><%= movimento.data %></td>
-              <td><%= movimento.importo %></td>
-              <td><%= movimento.descrizione %></td>
+              <td><%= movimento.date.toLocaleString('it-IT', { year:"numeric", month:"long", day:"numeric"}); %></td>
+              <td><%= movimento.amount %></td>
+              <td><%= movimento.description %></td>
+              <td>TODO salvadanaio</td>
               <% if (movimento.categoria !== 'null') { %>
                 <td><%= movimento.categoria %></td>
               <% } %>

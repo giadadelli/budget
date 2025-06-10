@@ -18,6 +18,7 @@ async function calcolaSituazione(conto) {
     const avanzo = await Promise.resolve(sommarioService.getDisponibilita(conto));
     const ultimoAggiornamento = await Promise.resolve(sommarioService.getUltimoAggiornamento(conto));
     const ultimaSpesa = await Promise.resolve(sommarioService.getUltimaSpesa(conto));
+    
     return {
       saldo,
       avanzo,
@@ -32,13 +33,13 @@ function calcolaSalvadanai(salvadanai) {
   //mappa -> id: etichetta, valore: array di salvadanai
   let salvadanaiMap = {};
   salvadanai.forEach(sd => {
-    if (sd.etichetta) {
-      if (!salvadanaiMap[sd.etichetta]) {
-        salvadanaiMap[sd.etichetta] = [];
+    if (sd.tag) {
+      if (!salvadanaiMap[sd.tag]) {
+        salvadanaiMap[sd.tag] = [];
       }
-      salvadanaiMap[sd.etichetta].push(sd);
+      salvadanaiMap[sd.tag].push(sd);
     } else {
-      salvadanaiMap[sd.titolo] = [sd];
+      salvadanaiMap[sd.name] = [sd];
     }
   });
 
