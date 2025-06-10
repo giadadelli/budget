@@ -2,6 +2,7 @@ Per ogni conto che vuoi gestire, crea una cartella che rappresenta il DB del con
 CONTI=["path1", "path2"]
 dentro il file .env nella root del progetto (da creare)
 
+
 Nella cartella che rappresenta il DB aggingi il file info.json in questo modo:
 
 {
