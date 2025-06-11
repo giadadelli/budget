@@ -12,6 +12,7 @@
   window.__CONTO__ = <%- JSON.stringify(conto) %>;
   window.__SALVADANAI__ = <%- JSON.stringify(salvadanai) %>;
   window.__DISTRIBUZIONI__ = <%- JSON.stringify(distribuzioni) %>;
+  window.__DATA__ = <%- JSON.stringify(data) %>;
 </script>
 
 <body class="">
@@ -62,6 +63,7 @@
         <% if (data.ultimaSpesa) { %>
           <h6>L'ultima spesa che hai registrato è del <%= data.ultimaSpesa.toLocaleString('it-IT', { year:"numeric", month:"long", day:"numeric"}); %></h6>
         <% } %>
+        <h6>Il tuo saldo aggiornato è: <span id="saldo-real-time"><%= data.saldo %></span> €</h6>
       </div>
     </div>
     <form id="form-uscita" method="dialog" class="flex flex-col gap-2">
