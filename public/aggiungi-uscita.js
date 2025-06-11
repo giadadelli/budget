@@ -3,7 +3,6 @@ const dialogUscita = document.getElementById('dialog-uscita');
 const formUscita = document.getElementById('form-uscita');
 
 const rowsContainer = document.getElementById("rows-container");
-createNewLine();
 const aggiungiUscitaRiga = document.getElementById("aggiungi-uscita-riga");
 aggiungiUscitaRiga?.addEventListener('click', () => createNewLine());
 
@@ -21,7 +20,7 @@ formUscita?.addEventListener('submit', async (e) => {
   
   const spese = [...rowsContainer.querySelectorAll('.riga-spesa')].map(async wrapper => {
     const data = wrapper.querySelector('input[name="data_movimento"]').value;
-    const importo = parseFloat(wrapper.querySelector('input[name="importo"]').value);
+    const importo = parseFloat(wrapper.querySelector('input[name="importo-uscita"]').value);
     const descrizione = wrapper.querySelector('input[name="descrizione"]').value;
     const salvadanaio = wrapper.querySelector('select[name="salvadanaio"]').value;
     
@@ -96,7 +95,7 @@ function createNewLine() {
       <label>Data</label>
     </div>
     <div class="input-field col">
-      <input type="number" class="validate" step="0.01" name="importo" id="importo-${id}" class="validate" required placeholder="10">
+      <input type="number" class="validate" step="0.01" class="importo" name="importo-uscita" id="importo-${id}" class="validate" required placeholder="10">
       <label for="importo-${id}">Importo</label>
     </div>
     <div class="input-field col">
@@ -123,9 +122,16 @@ function createNewLine() {
         <a id="btn-rimuovi-spesa" class="waves-effect waves-light btn red"><i class="material-icons">delete</i></a>
     </div>`
   }
-
+  
   wrapper.querySelector('#btn-rimuovi-spesa')?.addEventListener('click', () => {
     wrapper.remove();
+  });
+  wrapper.querySelector('#importo-' + id).addEventListener('change', () => {
+    let sum = window.__DATA__.saldo;
+    document.getElementsByName('importo-uscita').forEach(el => {
+      sum -= el.value;
+    });
+    document.getElementById('saldo-real-time').innerHTML = sum;
   });
 
   rowsContainer.appendChild(wrapper);
