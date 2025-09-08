@@ -26,7 +26,8 @@ async function findAll(conto) {
     for (const moneyBoxEntity of entities) {
       const target = moneyBoxEntity.obiettivo != "null" ? parseFloat(moneyBoxEntity.obiettivo) : null;
       const tag = moneyBoxEntity.etichetta === 'null' ? null : moneyBoxEntity.etichetta;
-      result.push(new MoneyBoxEntity(moneyBoxEntity.id, moneyBoxEntity.titolo, target, tag));
+      const mbEntity = new MoneyBoxEntity(moneyBoxEntity.id, moneyBoxEntity.titolo, target, tag, moneyBoxEntity.archiviato);
+      result.push(mbEntity);
     }
     
     return result;

@@ -36,7 +36,7 @@ async function getMovimenti(conto) {
 
 async function getSpese(conto) {
   const movimenti = await Promise.resolve(risparmiService.getMovimenti(conto));
-  return movimenti.filter((m) => m.importo < 0);
+  return movimenti.filter((m) => m.amount < 0);
 }
 
 async function getRisparmiTotalePerSalvadanaio(conto, salvadanaio) {
@@ -57,7 +57,7 @@ async function addSalvadanaio(conto, {titolo, obiettivo, iniziale}) {
     //'id,titolo,obiettivo,inserito'
 
     let uuid = crypto.randomUUID();
-    const row = `\n${uuid},${titolo},${target},${today},null`;
+    const row = `\n${uuid},${titolo},${target},${today},null,false`;
     
     MoneyBoxRepository.save(conto, row);
 

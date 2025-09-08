@@ -31,8 +31,10 @@ async function calcolaSituazione(conto) {
 
 function calcolaSalvadanai(salvadanai) {
   //mappa -> id: etichetta, valore: array di salvadanai
+  
   let salvadanaiMap = {};
-  salvadanai.forEach(sd => {
+  const notArchived = salvadanai.filter(sd => sd.archiviato == 'false')
+  notArchived.forEach(sd => {
     if (sd.tag) {
       if (!salvadanaiMap[sd.tag]) {
         salvadanaiMap[sd.tag] = [];

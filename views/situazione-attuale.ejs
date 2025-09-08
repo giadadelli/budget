@@ -131,7 +131,7 @@
 
               <div class="row"> <!-- Prima quelli senza obiettivo -->
                 <% salvadanai.forEach((salvadanaio, idx) => { %>
-                  <% if (salvadanaio.target == null) { %>
+                  <% if (salvadanaio.archiviato == 'false' && salvadanaio.target == null) { %>
                     <div class="input-field col s3">
                       <input class="importo_da_accantonare input-importi-esatti" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>" type="number" class="validate" value="0" step="0.01">
                       <input class="importo_da_accantonare input-percentuale" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>-p" type="number" disabled class="validate" value="0" step="0.01">
@@ -144,7 +144,7 @@
               </div>
               <div class="row"> <!-- Poi quelli con obiettivo non raggiunto -->
                 <% salvadanai.forEach((salvadanaio, idx) => { %>
-                  <% if (salvadanaio.target != null && salvadanaio.target > salvadanaio.balance) { %>
+                  <% if (salvadanaio.archiviato == 'false' && salvadanaio.target != null && salvadanaio.target > salvadanaio.balance) { %>
                     <div class="input-field col s4">
                       <input class="importo_da_accantonare input-importi-esatti" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>" type="number" class="validate" value="0" step="0.01">
                       <input class="importo_da_accantonare input-percentuale" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>-p" type="number" disabled class="validate" value="0" step="0.01">
@@ -157,7 +157,7 @@
               </div>
               <div class="row"> <!-- Infine quelli con obiettivo raggiunto -->
                 <% salvadanai.forEach((salvadanaio, idx) => { %>
-                  <% if (salvadanaio.target != null && salvadanaio.target <= salvadanaio.balance) { %>
+                  <% if (salvadanaio.archiviato == 'false' && salvadanaio.target != null && salvadanaio.target <= salvadanaio.balance) { %>
                     <div class="input-field col s4">
                       <input class="importo_da_accantonare input-importi-esatti" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>" type="number" class="validate" value="0" step="0.01">
                       <input class="importo_da_accantonare input-percentuale" name="<%= salvadanaio.id %>" id="<%= salvadanaio.id %>-p" type="number" disabled class="validate" value="0" step="0.01">
@@ -260,11 +260,14 @@
       </div> 
     </div>
     <%  Object.keys(salvadanaiNew).forEach((key, idx) => { %>
+      
+      
       <div class="col s2">
         <div class="card teal darken-1">
           <div class="card-content white-text">
             <span class="card-title" style="text-transform: capitalize"><%= key %></span>
             <%  salvadanaiNew[key].forEach((salvadanaio, idx) => { %>
+              <% if (salvadanaio.archiviato == 'false') { %>
               <div class="row">
                 <div class="col">
                   <%= salvadanaio.name %>: <%= salvadanaio.balance %>  €
@@ -273,6 +276,7 @@
                   <% } %> <!-- End if -->
                 </div>
               </div>
+              <% } %> <!-- End if archiviato -->
             <% }) %> <!-- End foreach salvadanaiNew[key] -->
           </div>
         </div>
